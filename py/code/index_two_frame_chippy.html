@@ -1,0 +1,442 @@
+<!DOCTYPE html> 
+<html>
+<head> 
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" value="notranslate">
+  <title>Chippy挑戰賽Blockly to code python</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="../../blockly_compressed.js"></script>
+  <script src="../../blocks_compressed.js"></script>
+  <script src="../../javascript_compressed.js"></script>
+  <script src="../../python_compressed.js"></script>
+  <script src="code.js"></script>
+  
+  <script src="block_httpServer.js"></script>  
+  <script src="block_opencv.js"></script>  
+  <script src="block_numpy.js"></script>  
+  <script src="block_python_functions.js"></script>  
+  <script src="block_pyautogui.js"></script>
+  <script src="block_google_colab.js"></script>
+  <script src="block_keras.js"></script>
+  <script src="block_Data_HandWrite.js"></script>
+  <script src="block_sklearn.js"></script>
+  <script src="block_mediapipe.js"></script>
+  <script src="block_thread.js"></script>
+  <script src="block_serial.js"></script>
+  <script src="block_pygame.js"></script>
+  <script src="block_openai.js"></script>
+  <script src="block_string.js"></script>
+  <script src="block_comma.js"></script>
+  <title>Scroll Bar Textbox</title>
+  
+  <!-- CodeMirror 核心樣式 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+  <!-- 主題 (此處採用 eclipse 主題) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/eclipse.min.css">
+
+  <style>
+    /* 將 body 設為橫向 Flex 版面 */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    
+    /* 左側區塊：預設寬度 70%，含原有 table 內容與 content_blocks */
+    .left-section {
+      flex-basis: 70%;
+      transition: flex-basis 0.3s ease;
+      background-color: #f0f0f0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    /* 當右側收合時，左側展開為全部空間扣除右側按鈕寬度 */
+    .left-section.expanded {
+      flex-basis: calc(100% - 40px);
+    }
+    
+    /* 右側區塊：預設寬度 30% */
+    .right-section {
+      flex-basis: 30%;
+      transition: flex-basis 0.3s ease;
+      background-color: #e0e0e0;
+      padding: 10px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    /* 右側區塊收合後僅留 40px 寬以顯示切換按鈕 */
+    .right-section.collapsed {
+      flex-basis: 40px;
+    }
+    
+    /* CodeMirror 文字編輯器 */
+    .CodeMirror {
+      width: 100%;
+      height: 100%;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+    /* 收合狀態下，右側的 CodeMirror 隱藏 */
+    .right-section.collapsed.CodeMirror {
+      display: none;
+    }
+    
+    /* 切換按鈕：以箭頭圖示呈現，固定在右側區塊左邊緣 */
+    .toggle-button {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translate(-50%, -50%);
+      padding: 5px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+  </style>
+</head> 
+
+<body>
+  <!-- 左側區塊，原有內容包含 table、content_blocks 等 -->
+  <div class="left-section" id="leftSection">
+	<!--<span id="title" style="display:none"></span>-->
+    <table width="100%" height="100%">
+      <tr>
+        <td>
+          <input id="input_save" type="button" value="Save" style="font-size:16px">
+          <input id="input_load" type="button" value="Load" style="font-size:16px">
+        </td>
+		<td class="farSide"><select id="languageMenu"></select></td>
+		<td class="farSide">
+			<button id="btn_copy_code" title="複製程式碼">
+				<img src='../../media/copy.png' class="copy icon21">
+				<font style="font-size: 16px;">複製程式碼</font>
+				</img>
+			</button>
+			<button id="trashButton" class="notext" title="...">
+				<img src='../../media/1x1.gif' class="trash icon21">
+			</button>
+		</td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <table width="100%">
+            <tr id="tabRow" height="26px">
+              <td id="tab_blocks" class="tabon">...</td>
+              <td class="tabmin tab_collapse">&nbsp;</td>
+              <td id="tab_python" class="taboff tab_collapse">Python</td>
+              <td width="100%" id="tab_hint1" class="tab_hint" style="visibility:hidden"></td>
+              <td id="tab_code" class="taboff">
+                <select id="code_menu"></select>
+              </td>
+              <td class="tabmax">
+                <button id="linkButton" class="notext" title="...">
+                  <img src='../../media/1x1.gif' class="link icon21">
+                </button>
+                <!--<button id="runButton" class="notext primary" title="..."><img src='../../media/1x1.gif' class="run icon21"></button>-->
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td height="99%" colspan="2" id="content_area">
+          <!-- 此處可能還包含其他內容 -->
+        </td>
+      </tr>
+    </table>
+    <!-- content_blocks 元件 -->
+    <div id="content_blocks" class="content"></div>
+    <pre id="content_python" class="content prettyprint lang-py"></pre>
+    <textarea id="content_xml" class="content" wrap="off"></textarea>
+      <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
+		<category name="{catText}" colour="160">
+			<!--註解-->
+			<block type="block_any_line"><field name="NAME"># 註解</field></block>
+			<block type="text"></block>
+			<block type="text_join"></block>
+			<block type="text_length" value="VALUE"><shadow type="text"><field name="TEXT">abc</field></shadow></block>
+			<block type="text_print"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>
+			<block type="python_input"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>
+		  </category>
+		  
+		  <category name="{catMath}" colour="230">
+			<block type="math_number"></block>
+			<block type="math_arithmetic"><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>
+			<block type="math_single"><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value></block>
+			<block type="math_trig"><value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value></block>
+			<block type="math_constant"></block>
+			<block type="math_number_property"><value name="NUMBER_TO_CHECK"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
+			<block type="math_round"><value name="NUM"><shadow type="math_number"><field name="NUM">3.1</field></shadow></value></block>
+			<block type="math_modulo"><value name="DIVIDEND"><shadow type="math_number"><field name="NUM">64</field></shadow></value><value name="DIVISOR"><shadow type="math_number"><field name="NUM">10</field></shadow></value></block>
+			<block type="math_random_int"><value name="FROM"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="TO"><shadow type="math_number"><field name="NUM">100</field></shadow></value></block>
+			<block type="math_random_float"></block>
+		  </category>
+
+		  <category name="{catLogic}" colour="210">
+			<block type="controls_if"></block>
+			<block type="logic_compare"></block>
+			<block type="logic_operation"></block>
+			<block type="logic_negate"></block>
+			<block type="logic_boolean"></block>
+		  </category>
+		  
+		  <category name="{catLoops}" colour="120">
+			<block type="controls_repeat_ext"><value name="TIMES"><shadow type="math_number"><field name="NUM">10</field></shadow></value></block>
+			<block type="controls_whileUntil"></block>
+			<block type="controls_for"><value name="FROM"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="TO"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="BY"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>
+			<block type="controls_flow_statements"></block>
+		  </category>
+			
+	  
+		  
+		  <category name="{catLists}" colour="260">
+			<block type="lists_create_with"> <mutation items="0"></mutation></block><block type="lists_create_with"></block>
+			<block type="lists_repeat"><value name="NUM"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block>
+			<block type="lists_length"></block>
+			<block type="lists_getIndex" value="VALUE"><block type="variables_get"><field name="VAR">{listVariable}</field></block></block>
+				<block type="lists_setIndex"><block type="variables_get"><field name="VAR">{listVariable}</field></block></block>
+				
+		  </category>
+				
+		  <sep></sep>
+		  
+		  <category name="{catVariables}" colour="330" custom="VARIABLE"></category>
+		  
+		
+	
+  </xml>
+  </div>
+  
+  <!-- 右側區塊：包含 CodeMirror 與切換按鈕 -->
+  <div class="right-section" id="rightSection">
+	<button class="toggle-button" id="toggleButton">&#9658;</button>
+	<textarea class="CodeMirror" placeholder="程式碼..."></textarea>	    
+  </div>
+  
+  <!-- 引入 CodeMirror 程式庫 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+  
+  <script>
+    // 以下為原本其他功能程式碼 (例如 Blockly 與 CodeMirror 初始化)
+    function loadxml(xml) {
+      if (typeof xml != "string" || xml.length < 5) {
+        alert("No Input");
+        return false;
+      }
+      try {
+        var dom = Blockly.Xml.textToDom(xml);
+        Blockly.mainWorkspace.clear();
+        Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
+        return true;
+      } catch (e) {
+        alert("Invalid xml");
+        return false;
+      }
+    }
+    
+    function createAndDownloadFile(filename, data) {
+      var clickEvent = new MouseEvent('click', {
+        'view': window,
+        'bubbles': true,
+        'cancelable': false
+      });
+      var a = document.createElement('a');
+      a.href = window.URL.createObjectURL(data);
+      a.download = filename;
+      a.textContent = 'Download file!';
+      a.dispatchEvent(clickEvent);
+    }
+    
+    document.getElementById('input_load').addEventListener('click', function(){
+      let input = document.createElement('input');
+      input.type = 'file';
+      input.onchange = _this => {
+        let files = Array.from(input.files);
+        var reader = new FileReader();
+        reader.onload = function() { loadxml(reader.result); }
+        reader.readAsText(files[0]);
+      };
+      input.click();
+    });
+    
+    document.getElementById('input_save').addEventListener('click', function() {
+      var xmlDom = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
+      var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+      var fileName = prompt('File Name for XML:', 'myblocks.xml');
+      if (!fileName) return;
+      var data = new Blob([xmlText], {type: 'text/xml'});
+      createAndDownloadFile(fileName, data);
+    });
+    
+	document.getElementById('btn_copy_code').addEventListener('click', function() {
+	  window.navigator.clipboard.writeText(getCode())
+	  .then(() => {	alert('程式碼已複製到剪貼簿！');}).catch(err => {	
+		alert('複製程式碼失敗！', err);});
+	});
+    let lastSelected_blocklyTreeRow = null;
+    function getCode() {
+		var code = Blockly.Python.workspaceToCode(Blockly.mainWorkspace);
+		var nn = code.indexOf('\n\n');
+		if (nn >= 0 && code.substring(0, nn).indexOf('None') >= 0)
+		  code = code.substring(nn + 3);
+		return code;
+	}	
+	window.onload = function()
+    { 
+      var editor = CodeMirror.fromTextArea(document.querySelector('.CodeMirror'), {
+        mode: "python",
+        theme: "eclipse",
+        lineNumbers: true,
+        matchBrackets: true,
+        indentUnit: 4,
+        tabSize: 4,
+        indentWithTabs: false
+      });
+      
+      const blocklyWorkspace = document.querySelector('.blocklyWorkspace');
+      const rightSection = document.getElementById('rightSection');
+      const leftSection = document.getElementById('leftSection');
+      const content_blocks = document.getElementById('content_blocks');
+	  //const blocklyCanvas = document.querySelector('.blocklyBlockCanvas');
+      content_blocks.style.width = "69%";
+      Blockly.svgResize(Blockly.mainWorkspace);
+      if (blocklyWorkspace) {
+        blocklyWorkspace.addEventListener('mousemove', (event) => {
+          //console.log(event);
+		  if (event.button === 0 ) 
+		  {
+			editor.setValue(getCode());
+			editor.refresh();
+          }
+        });
+      }
+	  // 增加視窗 resize 事件監聽
+	  window.addEventListener('resize', () => {
+		content_blocks.style.width = "69%";
+		Blockly.svgResize(Blockly.mainWorkspace);
+		//視窗大小改變時，檢查右側區塊狀態，若為收合狀態則點一下切換按鈕展開
+		if (rightSection.classList.contains('collapsed')) toggleButton.click();
+      });
+      // 取得左右主要區塊及切換按鈕
+      const toggleButton = document.getElementById('toggleButton');
+      toggleButton.addEventListener('click', () => {
+        // 切換右側區塊狀態
+        rightSection.classList.toggle('collapsed');
+        // 根據右側狀態，同步更新左側區塊
+        if (rightSection.classList.contains('collapsed')) {
+          // 右側收合時，更新按鈕箭頭並讓左側展開
+          content_blocks.style.width = "98%";
+          toggleButton.innerHTML = "&#9668;"; 
+          leftSection.classList.add('expanded');
+        } else {
+          // 右側展開時，更新按鈕箭頭並還原左側寬度
+          toggleButton.innerHTML = "&#9658;"; 
+          leftSection.classList.remove('expanded');
+		  content_blocks.style.width = "69%";
+        }
+        Blockly.svgResize(Blockly.mainWorkspace);
+		//Blockly.mainWorkspace.render();// 強制 workspace 重新渲染
+      });
+	  
+      document.addEventListener('keyup', handleKeyup);
+      function handleKeyup(e){
+        if(e.keyCode === 27){
+          lastSelected_blocklyTreeRow = null;
+        }
+        if(e.keyCode === 38 || e.keyCode === 40) {
+          var blocklyTreeRow = document.querySelector(".blocklyTreeRow.blocklyTreeSelected");
+          lastSelected_blocklyTreeRow = blocklyTreeRow;
+        }
+      }
+      
+      var topElement = document.querySelector("body > .left-section");
+      if(topElement) topElement.addEventListener('click', handleTopClick);
+	  else console.log("topElement not found");
+      
+      if(content_blocks) content_blocks.addEventListener('click', handleClick);
+      
+      function handleTopClick(e) {
+		//navigator.clipboard.writeText(getCode())
+        if(lastSelected_blocklyTreeRow != null) {
+          lastSelected_blocklyTreeRow.click();
+          lastSelected_blocklyTreeRow = null;
+        }
+      }
+    /* 
+	if (blocklyCanvas) {
+		blocklyCanvas.addEventListener('click', (event) => {
+			if (event.button === 0) console.log("blocklyCanvas click");
+		});
+	}*/
+
+      function handleClick(e) {
+        var blocklyTreeRow = document.querySelector(".blocklyTreeRow.blocklyTreeSelected");
+        var e_tab_hint1 = document.querySelector("#tab_hint1");
+        if(blocklyTreeRow != null) {
+          var hintHTML = "<font size=3>(按住shift鍵拖曳可維持選單,按住ctrl鍵可拖曳單一方塊)</font>";
+          e_tab_hint1.innerHTML = hintHTML;
+          let tabText = "opencv影像處理";
+          let ytLink = "https://www.youtube.com/watch?v=1ctcuUD7ci8&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=1";
+          if(blocklyTreeRow.textContent.includes(tabText)){
+            let linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';
+            e_tab_hint1.innerHTML = linkHTML + hintHTML;
+          }
+          tabText = "mediapip手部偵測";
+          ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=4";
+          if(blocklyTreeRow.textContent.includes(tabText)){
+            let linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';
+            e_tab_hint1.innerHTML = linkHTML + hintHTML;
+          }
+          tabText = "鍵鼠外掛";
+          ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=5";
+          if(blocklyTreeRow.textContent.includes(tabText)){
+            let linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';
+            e_tab_hint1.innerHTML = linkHTML + hintHTML;
+          }
+          tabText = "語音與文字處理";
+          ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=6";
+          if(blocklyTreeRow.textContent.includes(tabText)){
+            let linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';
+            e_tab_hint1.innerHTML = linkHTML + hintHTML;
+          }
+          tabText = "youtube工具";
+          ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=7";
+          if(blocklyTreeRow.textContent.includes(tabText)){
+            let linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';
+            e_tab_hint1.innerHTML = linkHTML + hintHTML;
+          }
+          e_tab_hint1.style.visibility = "visible";
+        } 
+		else 
+		{
+          var e_tab_hint1 = document.querySelector("#tab_hint1");
+          if(e_tab_hint1) e_tab_hint1.style.visibility = "hidden";
+          if(e.pageX > 200){
+            if(lastSelected_blocklyTreeRow != null && e.shiftKey) {
+              lastSelected_blocklyTreeRow.click();
+            }
+          } else {
+            lastSelected_blocklyTreeRow = blocklyTreeRow;
+          }
+        }
+      }
+    };
+  </script>
+</body>
+</html>
