@@ -1,3 +1,4 @@
+python_string_colour = 180;
 //<block type="bytestring"></block>
 //======================================
 Blockly.Blocks['bytestring'] = {
@@ -8,7 +9,7 @@ Blockly.Blocks['bytestring'] = {
         .appendField("'");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(180);
+    this.setColour(python_string_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -31,7 +32,7 @@ Blockly.Blocks['python_str'] = {
         .appendField(")");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_string_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -55,7 +56,7 @@ Blockly.Blocks['string_strip'] = {
         .appendField(")");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_string_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -80,7 +81,7 @@ Blockly.Blocks['string_split'] = {
         .appendField(")");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_string_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -104,7 +105,7 @@ Blockly.Blocks['string_decode'] = {
         .appendField(")");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_string_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -128,7 +129,7 @@ Blockly.Blocks['string_encode'] = {
         .appendField(")");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_string_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }

@@ -213,7 +213,7 @@ Blockly.Python['numpyarray_flatten'] = function(block) {
 Blockly.Blocks['numpy_var_dim1'] = {
   init: function() {//
 	this.appendDummyInput()
-		.appendField(new Blockly.FieldVariable("A"), "ARRAY_NAME");
+		.appendField(new Blockly.FieldVariable("a_list"), "ARRAY_NAME");
     this.appendValueInput("DIM1_START")
         .setCheck("Number")
         .appendField("[");
@@ -224,7 +224,7 @@ Blockly.Blocks['numpy_var_dim1'] = {
         .appendField("]");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(Colour_numpy);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -241,7 +241,7 @@ Blockly.Python['numpy_var_dim1'] = function(block) {
 Blockly.Blocks['numpy_var_dim2'] = {
   init: function() {//
 	this.appendDummyInput()
-		.appendField(new Blockly.FieldVariable("A"), "ARRAY_NAME");
+		.appendField(new Blockly.FieldVariable("a_list"), "ARRAY_NAME");
     this.appendValueInput("DIM21_START")
         .setCheck("Number")
         .appendField("[");
@@ -259,7 +259,7 @@ Blockly.Blocks['numpy_var_dim2'] = {
         .appendField("]");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(Colour_numpy);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -311,7 +311,7 @@ Blockly.Blocks['list_by2'] = {
         .appendField("]");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(Colour_numpy);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -340,7 +340,7 @@ Blockly.Blocks['list_by3'] = {
         .appendField("]");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(Colour_numpy);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -354,64 +354,7 @@ Blockly.Python['list_by3'] = function(block) {
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.Python.ORDER_ATOMIC];
 };
-//=====================================================
-Blockly.Blocks['build_tuple2'] = {
-  init: function() {
-    this.appendValueInput("TUPLE2_V1")
-        .setCheck("Number")
-        .appendField("(");
-    this.appendValueInput("TUPLE2_V2")
-        .setCheck("Number")
-        .appendField(",");
-    this.appendDummyInput()
-        .appendField(")");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(Colour_numpy);
- this.setTooltip("");
- this.setHelpUrl("");
-  }
-};
 
-Blockly.Python['build_tuple2'] = function(block) {
-  var value_tuple_v1 = Blockly.Python.valueToCode(block, 'TUPLE2_V1', Blockly.Python.ORDER_ATOMIC);
-  var value_tuple_v2 = Blockly.Python.valueToCode(block, 'TUPLE2_V2', Blockly.Python.ORDER_ATOMIC);
-  // TODO: Assemble Python into code variable.
-  var code = '('+value_tuple_v1+','+value_tuple_v2+')';
-  // TODO: Change ORDER_NONE to the correct strength.
-  return [code, Blockly.Python.ORDER_ATOMIC];
-};
-//=====================================================
-Blockly.Blocks['build_tuple3'] = {
-  init: function() {
-    this.appendValueInput("TUPLE3_V1")
-        .setCheck("Number")
-        .appendField("(");
-    this.appendValueInput("TUPLE3_V2")
-        .setCheck("Number")
-        .appendField(",");
-    this.appendValueInput("TUPLE3_V3")
-        .setCheck("Number")
-        .appendField(",");
-    this.appendDummyInput()
-        .appendField(")");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(Colour_numpy);
- this.setTooltip("");
- this.setHelpUrl("");
-  }
-};
-
-Blockly.Python['build_tuple3'] = function(block) {
-  var value_tuple_v1 = Blockly.Python.valueToCode(block, 'TUPLE3_V1', Blockly.Python.ORDER_ATOMIC);
-  var value_tuple_v2 = Blockly.Python.valueToCode(block, 'TUPLE3_V2', Blockly.Python.ORDER_ATOMIC);
-  var value_tuple_v3 = Blockly.Python.valueToCode(block, 'TUPLE3_V3', Blockly.Python.ORDER_ATOMIC);
-  // TODO: Assemble Python into code variable.
-  var code = '('+value_tuple_v1+','+value_tuple_v2+','+value_tuple_v3+')';
-  // TODO: Change ORDER_NONE to the correct strength.
-  return [code, Blockly.Python.ORDER_NONE];
-};
 //====================================================
 Blockly.Blocks['list_append'] = {
   init: function() {
@@ -425,7 +368,7 @@ Blockly.Blocks['list_append'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(Colour_numpy);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -480,7 +423,7 @@ Blockly.Blocks['list_getDim1'] = {
         .appendField("]");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(Colour_numpy);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -562,7 +505,7 @@ Blockly.Blocks['empty_list'] = {
         .appendField(" [  ]");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(Colour_numpy);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }

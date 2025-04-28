@@ -1,10 +1,21 @@
-python_functions_colour=80;
+python_functions_colour = 90;
+python_input_colour = 60;
+python_output_colour = 60;
+python_logic_colour = 230;
+python_math_colour = 240;
+python_loop_colour = 120;
+python_container_colour = 260;
+python_string_colour = 160;
+python_comment_colour = 30;
+python_symbol_colour = 150;
+python_frame_colour = 0;
+
 //<block type="block_python_type"></block>
 //======================================
 Blockly.Blocks['block_python_type'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([["int","int"], ["float","float"], ["bool","bool"], ["chr","chr"], ["ord","ord"], ["hex","ord"], ["bin","ord"]]), "NAME1");
+        .appendField(new Blockly.FieldDropdown([["int","int"], ["float","float"], ["bool","bool"], ["chr","chr"], ["ord","ord"], ["hex","hex"], ["bin","bin"]]), "NAME1");
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(80);
@@ -52,7 +63,7 @@ Blockly.Blocks['block_any_line'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(80);
+    this.setColour(python_comment_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -71,7 +82,7 @@ Blockly.Blocks['block_emptystring'] = {
         .appendField("\"\"");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(80);
+    this.setColour(python_string_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -135,7 +146,7 @@ Blockly.Python['import_as'] = function(block) {
 //======================================
 Blockly.Blocks['tb_connection'] = {
   init: function() {
-    this.appendValueInput("NAME")
+    this.appendValueInput("tb_connection_NAME")
         .setCheck(null)
         .appendField("");
     this.setInputsInline(true);
@@ -147,9 +158,9 @@ Blockly.Blocks['tb_connection'] = {
   }
 };
 Blockly.Python['tb_connection'] = function(block) {
-  var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC);
+  var value_name = Blockly.Python.valueToCode(block, 'tb_connection_NAME', Blockly.Python.ORDER_ATOMIC);
   // TODO: Assemble Python into code variable.
-  var code = value_name+'\n';
+  var code = value_name;
   return code;
 };
 //<block type="from_import"></block>
@@ -480,9 +491,9 @@ Blockly.Python['import_any'] = function(block) {
   var code = 'import '+text_name+'\n';
   return code;
 };
-//<block type="print_"></block>
+//<block type="print_newline"></block>
 //======================================
-Blockly.Blocks['print_'] = {
+Blockly.Blocks['print_newline'] = {
   init: function() {
     this.appendValueInput("NAME1")
         .setCheck(null)
@@ -499,7 +510,7 @@ Blockly.Blocks['print_'] = {
  this.setHelpUrl("");
   }
 };
-Blockly.Python['print_'] = function(block) {
+Blockly.Python['print_newline'] = function(block) {
   var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
   var text_name2 = block.getFieldValue('NAME2');
   // TODO: Assemble Python into code variable.
@@ -508,6 +519,35 @@ Blockly.Python['print_'] = function(block) {
 	  code = 'print('+value_name1+')\n';
   return code;
 };
+//<block type="print_No_line_breaks"></block>
+//======================================
+Blockly.Blocks['print_No_line_breaks'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null)
+        .appendField("print(");
+    this.appendDummyInput()
+        .appendField(",")
+        .appendField(new Blockly.FieldTextInput("end=\"\""), "NAME2")
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(python_functions_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['print_No_line_breaks'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var text_name2 = block.getFieldValue('NAME2');
+  // TODO: Assemble Python into code variable.
+  var code = 'print('+value_name1+','+text_name2+')\n';
+  if(text_name2=="end=\"\"")
+	  code = 'print('+value_name1+',end="")';
+  return code;
+};
+
 //<block type="str_"></block>
 //======================================
 Blockly.Blocks['str_'] = {
@@ -541,7 +581,7 @@ Blockly.Blocks['block_if_single'] = {
         .appendField("if");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(python_logic_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -570,7 +610,7 @@ Blockly.Blocks['ifelse'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(python_logic_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -600,7 +640,7 @@ Blockly.Blocks['elif'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(python_logic_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -620,13 +660,13 @@ Blockly.Python['elif'] = function(block) {
 Blockly.Blocks['else'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("else:");
+        .appendField("else :");
     this.appendStatementInput("NAME2")
         .setCheck(null);
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(python_logic_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -652,7 +692,7 @@ Blockly.Blocks['if'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(python_logic_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -667,23 +707,23 @@ Blockly.Python['if'] = function(block) {
   else	code+='\n'+statements_name2;
   return code;
 };
-//<block type="logic_operation"></block>
+//<block type="python_logic_operation"></block>
 //======================================
-Blockly.Blocks['logic_operation'] = {
+Blockly.Blocks['python_logic_operation'] = {
   init: function() {
     this.appendValueInput("NAME1")
         .setCheck(null);
     this.appendValueInput("NAME2")
         .setCheck(null)
-        .appendField(new Blockly.FieldDropdown([["==","=="], [">",">"], [">=",">="], ["<","<"], ["!=","!="], [" in "," in "], [" is "," is "], [" and "," and "], [" or "," or "], ["+=","+="], ["-=","-="], ["+","+"], ["-","-"], ["*","*"], ["/","/"], ["%","%"]]), "NAME3");
+        .appendField(new Blockly.FieldDropdown([["=="," == "], [">"," > "], [">="," >= "], ["<"," < "], ["<="," <= "],["!="," != "], ["and"," and "], ["or"," or "],["in"," in "], ["is"," is "], ["is not"," is not "]]), "NAME3");
 	this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(230);
+    this.setColour(python_logic_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
 };
-Blockly.Python['logic_operation'] = function(block) {
+Blockly.Python['python_logic_operation'] = function(block) {
   var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
   var dropdown_name3 = block.getFieldValue('NAME3');
   var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
@@ -692,20 +732,100 @@ Blockly.Python['logic_operation'] = function(block) {
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.Python.ORDER_ATOMIC];
 };
-//<block type="logic_boolean"></block>
+
+//<block type="operator"></block>
 //======================================
-Blockly.Blocks['logic_boolean'] = {
+Blockly.Blocks['operator'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(new Blockly.FieldDropdown([["+"," + "], ["-"," - "], ["*"," * "], ["/"," / "], ["%"," % "], ["//"," // "],["**"," ** "]]), "NAME3");
+	  this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_logic_colour);
+  this.setTooltip("");
+  this.setHelpUrl("");
+  }
+};
+Blockly.Python['operator'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var dropdown_name3 = block.getFieldValue('NAME3');
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1+dropdown_name3+value_name2;
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="compound_operator"></block>
+//======================================
+Blockly.Blocks['compound_operator'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(new Blockly.FieldDropdown([["+="," += "], ["-="," -= "], ["*="," *= "], ["/="," /= "], ["%="," %= "], ["//="," //= "],["**="," **= "]]), "NAME3");
+	  this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_logic_colour);
+  this.setTooltip("");
+  this.setHelpUrl("");
+  }
+};
+Blockly.Python['compound_operator'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var dropdown_name3 = block.getFieldValue('NAME3');
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1+dropdown_name3+value_name2;
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="bitwise_Operation"></block>
+//======================================
+Blockly.Blocks['bitwise_Operation'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(new Blockly.FieldDropdown([["|"," | "], ["^"," ^ "], ["&"," & "], ["<<"," << "], [">>"," >> "]]), "NAME3");
+	  this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_logic_colour);
+  this.setTooltip("");
+  this.setHelpUrl("");
+  }
+};
+Blockly.Python['bitwise_Operation'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var dropdown_name3 = block.getFieldValue('NAME3');
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1+dropdown_name3+value_name2;
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+
+//<block type="python_logic_boolean"></block>
+//======================================
+Blockly.Blocks['python_logic_boolean'] = {
   init: function() {
     this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown([["True","True"], ["False","False"]]), "NAME1");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(230);
+    this.setColour(python_logic_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
 };
-Blockly.Python['logic_boolean'] = function(block) {
+Blockly.Python['python_logic_boolean'] = function(block) {
   var dropdown_name1 = block.getFieldValue('NAME1');
   // TODO: Assemble Python into code variable.
   var code = 'True';
@@ -727,7 +847,7 @@ Blockly.Blocks['while'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_loop_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -772,6 +892,35 @@ Blockly.Python['try_except'] = function(block) {
 			statements_name3;
   return code;
 };
+
+//======================================
+Blockly.Blocks['try_except_zero'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("try:");
+    this.appendStatementInput("NAME1")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField("except:");
+    this.appendStatementInput("NAME2")
+        .setCheck(null);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(python_functions_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['try_except_zero'] = function(block) {
+  var statements_name1 = Blockly.Python.statementToCode(block, 'NAME1');
+  var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
+  // TODO: Assemble Python into code variable.
+  var code = 'try:\n'+statements_name1+
+			'except:\n'+
+			statements_name2;
+  return code;
+};
+
 //========================================================
 Blockly.Blocks['python_int'] = {
   init: function() {
@@ -782,7 +931,7 @@ Blockly.Blocks['python_int'] = {
         .appendField(")");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_math_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -795,6 +944,80 @@ Blockly.Python['python_int'] = function(block) {
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.Python.ORDER_ATOMIC];
 };
+
+//========================================================
+Blockly.Blocks['python_float'] = {
+  init: function() {
+    this.appendValueInput("python_float_V")
+        .setCheck(null)
+        .appendField("float(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_math_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Python['python_float'] = function(block) {
+  var value_python_float_v = Blockly.Python.valueToCode(block, 'python_float_V', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = 'float('+value_python_float_v+')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+
+//========================================================
+Blockly.Blocks['python_list'] = {
+  init: function() {
+    this.appendValueInput("python_list_V")
+        .setCheck(null)
+        .appendField("list(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_container_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Python['python_list'] = function(block) {
+  var value_python_list_v = Blockly.Python.valueToCode(block, 'python_list_V', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = 'list('+value_python_list_v+')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//========================================================
+Blockly.Blocks['python_map'] = {
+  init: function() {
+    this.appendValueInput("python_map_V")
+        .setCheck(null)
+        .appendField("map(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_container_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Python['python_map'] = function(block) {
+  var value_python_map_v = Blockly.Python.valueToCode(block, 'python_map_V', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = 'map('+value_python_map_v+')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
 //========================================================
 Blockly.Blocks['python_ord'] = {
   init: function() {
@@ -869,7 +1092,7 @@ Blockly.Blocks['plus2'] = {
         .appendField("+");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_string_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -887,7 +1110,7 @@ Blockly.Blocks['for_i_in_'] = {
     this.appendValueInput("NAME1")
         .setCheck(null)
         .appendField("for")
-        .appendField(new Blockly.FieldVariable("i"), "NAME2")
+        .appendField(new Blockly.FieldDropdown([["i","i"], ["j","j"], ["k","k"], ["l","l"]]), "NAME2")
         .appendField("in");
     this.appendDummyInput()
         .appendField(":");
@@ -896,7 +1119,7 @@ Blockly.Blocks['for_i_in_'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(105);
+    this.setColour(python_loop_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -904,7 +1127,6 @@ Blockly.Blocks['for_i_in_'] = {
 Blockly.Python['for_i_in_'] = function(block) {
   //var variable_name2 = Blockly.JavaScript.nameDB_.getName(block.getFieldValue('NAME2'), Blockly.Variables.NAME_TYPE);
   var variable_name2 = Blockly.Python.nameDB_.getName(block.getFieldValue('NAME2'), Blockly.Names.NameType.VARIABLE);
-  
   var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
   var statements_3 = Blockly.Python.statementToCode(block, '3');
   // TODO: Assemble JavaScript into code variable.
@@ -922,7 +1144,7 @@ Blockly.Blocks['python_range'] = {
         .appendField(")");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(105);
+    this.setColour(python_loop_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -947,7 +1169,7 @@ Blockly.Blocks['python_range2'] = {
         .appendField(")");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(105);
+    this.setColour(python_loop_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -960,6 +1182,37 @@ Blockly.Python['python_range2'] = function(block) {
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.Python.ORDER_ATOMIC];
 };
+
+//================================
+Blockly.Blocks['python_range3'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck("Number")
+        .appendField("range(");
+    this.appendValueInput("NAME2")
+        .setCheck("Number")
+        .appendField(",");
+    this.appendValueInput("NAME3")
+        .setCheck("Number")
+        .appendField(",");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_loop_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['python_range3'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = 'range('+value_name1+','+value_name2+','+value_name3+')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
 //==================================================
 Blockly.Blocks['python_continue'] = {
   init: function() {
@@ -967,7 +1220,7 @@ Blockly.Blocks['python_continue'] = {
         .appendField("continute");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(105);
+    this.setColour(python_logic_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -984,7 +1237,7 @@ Blockly.Blocks['python_break'] = {
         .appendField("break");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(105);
+    this.setColour(python_logic_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1148,7 +1401,7 @@ Blockly.Blocks['block_string_double_quotes'] = {
         .appendField("\"");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(80);
+    this.setColour(python_string_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1170,7 +1423,7 @@ Blockly.Blocks['block_string'] = {
         .appendField("'");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(80);
+    this.setColour(python_string_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1192,7 +1445,7 @@ Blockly.Blocks['block_fstring'] = {
         .appendField("\"");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(80);
+    this.setColour(python_string_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1216,7 +1469,7 @@ Blockly.Blocks['block_colon_a_b'] = {
         .setCheck(null);
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(80);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1243,7 +1496,7 @@ Blockly.Blocks['block_colon_a_b_c'] = {
         .appendField(":");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(80);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1268,7 +1521,7 @@ Blockly.Blocks['python_bytes'] = {
         .appendField(")");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_math_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1291,7 +1544,7 @@ Blockly.Blocks['python_big_parantheses'] = {
         .appendField("}");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1315,7 +1568,7 @@ Blockly.Blocks['block_parentheses'] = {
         .appendField(")");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1338,7 +1591,7 @@ Blockly.Blocks['python_in'] = {
         .setCheck(null);
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1427,7 +1680,7 @@ Blockly.Blocks['block_get_anyconcat'] = {
         .appendField(new Blockly.FieldTextInput("."), "NAME2");
     this.appendValueInput("NAME3")
         .setCheck(null);
-    this.setInputsInline(true);
+    this.setInputsInline(true);print
     this.setOutput(true, null);
     this.setColour(python_functions_colour);
  this.setTooltip("");
@@ -1559,7 +1812,7 @@ Blockly.Blocks['create_arrayin'] = {
         .appendField("]");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_functions_colour);
+    this.setColour(python_container_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1588,7 +1841,7 @@ Blockly.Blocks['for_loop'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(105);
+    this.setColour(python_loop_colour);
  this.setTooltip("");
  this.setHelpUrl("");
   }
@@ -1626,4 +1879,332 @@ Blockly.Python['block_equal_'] = function(block) {
   var code = value_name1+'='+value_name2;
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="math_value_left"></block>
+//======================================
+Blockly.Blocks['math_value_left'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null)
+        .appendField(new Blockly.FieldDropdown([["int","int"], ["float","float"], ["bin","bin"], ["hex","hex"], ["oct","oct"], ["abs","abs"], ["divmod","divmod"], ["pow","pow"], ["round","round"]]), "NAME2")
+        .appendField("(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['math_value_left'] = function(block) {
+  var dropdown_name2 = block.getFieldValue('NAME2');
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = dropdown_name2 + "(" + value_name1 + ")";
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="list_value"></block>
+//======================================
+Blockly.Blocks['list_value'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null)
+        .appendField(new Blockly.FieldDropdown([["len","len"], ["min","min"], ["max","max"], ["sum","sum"], ["sorted","sorted"], ["zip","zip"], ["enumerate","enumerate"], ["iter","iter"], ["next","next"]]), "NAME2")
+        .appendField("(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_container_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['list_value'] = function(block) {
+  var dropdown_name2 = block.getFieldValue('NAME2');
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = dropdown_name2 + "(" + value_name1 + ")";
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="string_value"></block>
+//======================================
+Blockly.Blocks['string_value'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null)
+        .appendField(new Blockly.FieldDropdown([["len","len"], ["min","min"], ["max","max"], ["sum","sum"], ["sorted","sorted"], ["zip","zip"], ["enumerate","enumerate"], ["iter","iter"], ["next","next"]]), "NAME2")
+        .appendField("(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['string_value'] = function(block) {
+  var dropdown_name2 = block.getFieldValue('NAME2');
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = dropdown_name2 + "(" + value_name1 + ")";
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="list_operations"></block>
+//======================================
+Blockly.Blocks['list_operations'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField(".")
+        .appendField(new Blockly.FieldDropdown([["append","append"], ["join","join"], ["count","count"], ["extend","extend"], ["index","index"], ["insert","insert"], ["pop","pop"], ["remove","remove"], ["reverse","reverse"], ["sort","sort"]]), "NAME2")
+        .appendField("(");
+    this.appendValueInput("NAME3")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_container_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['list_operations'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var dropdown_name2 = block.getFieldValue('NAME2');
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + "." + dropdown_name2 + "(" + value_name3 + ")";
+  return  [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="string_operations"></block>
+//======================================
+Blockly.Blocks['string_operations'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField(".")
+        .appendField(new Blockly.FieldDropdown([ ["split","split"], ["replace","replace"], ["strip","strip"], ["startswith","startswith"], ["count","count"], ["join","join"], ["title","title"],["upper","upper"], ["lower","lower"], ["capitalize","capitalize"], ["swapcase","swapcase"], ["islower","islower"], ["isupper","isupper"], ["isalpha","isalpha"], ["isdecimal","isdecimal"], ["isalnum","isalnum"], ["isdigit","isdigit"] ]), "NAME2")
+        .appendField("(");
+    this.appendValueInput("NAME3")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_string_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['string_operations'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var dropdown_name2 = block.getFieldValue('NAME2');
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + "." + dropdown_name2 + "(" + value_name3 + ")";
+  return code;
+};
+
+//<block type="block_print_all"></block>
+//======================================
+Blockly.Blocks['block_print_all'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null)
+        .appendField("print(");
+    this.appendDummyInput()
+        .appendField(",")
+        .appendField(new Blockly.FieldTextInput("sep = \" \""), "NAME2")
+        .appendField(",")
+        .appendField(new Blockly.FieldTextInput("end = \"\\n\""), "NAME3");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(python_functions_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['block_print_all'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var text_name2 = block.getFieldValue('NAME2');
+  var text_name3 = block.getFieldValue('NAME3');
+  // TODO: Assemble Python into code variable.
+  var code = "print( "+ value_name1 + ", " + text_name2 + ", " + text_name3 +" )";
+  return code;
+};
+
+//<block type="list_for_input_1d"></block>
+//======================================
+Blockly.Blocks['list_for_input_1d'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null)
+        .appendField("[");
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField("for");
+    this.appendValueInput("NAME3")
+        .setCheck(null)
+        .appendField("in");
+    this.appendDummyInput()
+        .appendField("]");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_container_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['list_for_input_1d'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = "[ " + value_name1 + " for " + value_name2 + " in " + value_name3 + " ]";
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//=====================================================
+Blockly.Blocks['build_tuple2'] = {
+  init: function() {
+    this.appendValueInput("TUPLE2_V1")
+        .setCheck("Number")
+        .appendField("(");
+    this.appendValueInput("TUPLE2_V2")
+        .setCheck("Number")
+        .appendField(",");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_container_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Python['build_tuple2'] = function(block) {
+  var value_tuple_v1 = Blockly.Python.valueToCode(block, 'TUPLE2_V1', Blockly.Python.ORDER_ATOMIC);
+  var value_tuple_v2 = Blockly.Python.valueToCode(block, 'TUPLE2_V2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = '('+value_tuple_v1+','+value_tuple_v2+')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+//=====================================================
+Blockly.Blocks['build_tuple3'] = {
+  init: function() {
+    this.appendValueInput("TUPLE3_V1")
+        .setCheck("Number")
+        .appendField("(");
+    this.appendValueInput("TUPLE3_V2")
+        .setCheck("Number")
+        .appendField(",");
+    this.appendValueInput("TUPLE3_V3")
+        .setCheck("Number")
+        .appendField(",");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_container_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Python['build_tuple3'] = function(block) {
+  var value_tuple_v1 = Blockly.Python.valueToCode(block, 'TUPLE3_V1', Blockly.Python.ORDER_ATOMIC);
+  var value_tuple_v2 = Blockly.Python.valueToCode(block, 'TUPLE3_V2', Blockly.Python.ORDER_ATOMIC);
+  var value_tuple_v3 = Blockly.Python.valueToCode(block, 'TUPLE3_V3', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = '('+value_tuple_v1+','+value_tuple_v2+','+value_tuple_v3+')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_NONE];
+};
+
+//=======================================================
+Blockly.Blocks['numpy_var_dim3'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldVariable("a_list"), "ARRAY_NAME");
+    this.appendValueInput("DIM3_START")
+        .setCheck("Number")
+        .appendField("[");
+    this.appendValueInput("DIM3_second")
+        .setCheck("Number")
+        .appendField(":");
+    this.appendValueInput("DIM3_END")
+        .setCheck("Number")
+        .appendField(":");
+    this.appendDummyInput()
+        .appendField("]");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_container_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['numpy_var_dim3'] = function(block) {
+  var value_array_name=Blockly.Python.nameDB_.getName(block.getFieldValue('ARRAY_NAME'), Blockly.Names.NameType.VARIABLE);
+  var value_dim3_start = Blockly.Python.valueToCode(block, 'DIM1_START', Blockly.Python.ORDER_ATOMIC);
+  var value_dim3_second = Blockly.Python.valueToCode(block, 'DIM3_second', Blockly.Python.ORDER_ATOMIC);
+  var value_dim3_end = Blockly.Python.valueToCode(block, 'DIM1_END', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_array_name+'['+value_dim3_start+':'+value_dim3_second+':'+value_dim3_end+']';
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="python_input"></block>
+//======================================
+Blockly.Blocks['python_input'] = {
+  init: function() {
+    this.appendValueInput("TEXT")
+        .setCheck(["String", "Text"])
+        .appendField("輸入")
+        .appendField(new Blockly.FieldDropdown([
+          ["文字", "input"],
+          ["整數", "int"],
+          ["浮點數", "float"]
+        ]), "type1")
+        .appendField("並顯示提示訊息");
+    this.setInputsInline(false);
+    this.setOutput(true, null);
+    this.setColour(160);
+    this.setTooltip("輸入提示訊息並選擇輸入類型");
+    this.setHelpUrl("");
+  }
+};
+
+Blockly.Python['python_input'] = function(block) {
+  var dropdown_type1 = block.getFieldValue('type1');
+  var value_input1 = Blockly.Python.valueToCode(block, 'TEXT', Blockly.Python.ORDER_ATOMIC) || '""';
+  
+  // Remove quotes if they exist
+  value_input1 = value_input1.replace(/^["']|["']$/g, '');
+  
+  var code;
+  if (dropdown_type1 === 'input') {
+      code = 'input("' + value_input1 + '")';
+  } else {
+      code = dropdown_type1 + '(input("' + value_input1 + '"))';
+  }
+  return [code, Blockly.Python.ORDER_FUNCTION_CALL];
 };
