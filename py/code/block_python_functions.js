@@ -588,8 +588,12 @@ Blockly.Blocks['block_if_single'] = {
 };
 Blockly.Python['block_if_single'] = function(block) {
   var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC);
-  // TODO: Assemble Python into code variable.
-  var code = 'if '+value_name+'\n';
+  var code = 'if ';
+  if (value_name) {
+    code += value_name + ':\n  pass\n';
+  } else {
+    code += 'True:\n  pass\n'; // 為了保證語法正確，即使沒有條件也需要一個永遠為真的條件
+  }
   return code;
 };
 //<block type="ifelse"></block>
