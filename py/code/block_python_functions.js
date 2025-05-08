@@ -2333,6 +2333,7 @@ Blockly.Python['block_print_single'] = function(block) {
   var code = 'print(' + value_name + ')\n';
   return code;
 };
+
 //<block type="fstring_format_block"></block>
 //======================================
 Blockly.Blocks['fstring_format_block'] = {
