@@ -276,11 +276,19 @@ Blockly.Blocks['statement_var'] = {
   }
 };
 Blockly.Python['statement_var'] = function(block) {
-  var text_name = block.getFieldValue('NAME');
-  var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC);
+  var text_name = block.getFieldValue('NAME').trim(); // 取得關鍵字並去除前後空白
+  var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC) || ''; // 取得變數或表達式，沒有連接時為空
   var statements_name1 = Blockly.Python.statementToCode(block, 'NAME1');
-  // TODO: Assemble Python into code variable.
-  var code = text_name+" "+value_name+":\n"+statements_name1+'\n';
+  var code = text_name;
+  if (value_name) {
+    code += ' ' + value_name;
+  }
+  code += ':\n';
+  if (statements_name1) {
+    code += Blockly.Python.INDENT + statements_name1;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
   return code;
 };
 //<block type="cammaconcat"></block>
@@ -515,7 +523,7 @@ Blockly.Python['print_newline'] = function(block) {
   var text_name2 = block.getFieldValue('NAME2');
   // TODO: Assemble Python into code variable.
   var code = 'print('+value_name1+','+text_name2+')\n';
-  (text_name2=="end=\"\\n\"")
+  if(text_name2=="end=\"\\n\"")
 	  code = 'print('+value_name1+')\n';
   return code;
 };
@@ -543,7 +551,7 @@ Blockly.Python['print_No_line_breaks'] = function(block) {
   var text_name2 = block.getFieldValue('NAME2');
   // TODO: Assemble Python into code variable.
   var code = 'print('+value_name1+','+text_name2+')\n';
-  (text_name2=="end=\"\"")
+  if(text_name2=="end=\"\"")
 	  code = 'print('+value_name1+',end="")';
   return code;
 };
@@ -572,13 +580,13 @@ Blockly.Python['str_'] = function(block) {
   return code;
 };
 
-//<block type="block__single"></block>
+//<block type="block_if_single"></block>
 //======================================
 Blockly.Blocks['block_if_single'] = {
   init: function() {
     this.appendValueInput("NAME")
         .setCheck(null)
-        .appendField("");
+        .appendField("if");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_logic_colour);
@@ -587,10 +595,10 @@ Blockly.Blocks['block_if_single'] = {
   }
 };
 Blockly.Python['block_if_single'] = function(block) {
-  var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC);
-  // TODO: Assemble Python into code variable.
-  var code = 'if '+value_name+'\n';
-  return code;
+  var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = 'if '+value_name+'\n';
+  return code;
 };
 //<block type="ifelse"></block>
 //======================================
@@ -616,15 +624,22 @@ Blockly.Blocks['ifelse'] = {
   }
 };
 Blockly.Python['ifelse'] = function(block) {
-  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
-  var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
-  var statements_name3 = Blockly.Python.statementToCode(block, 'NAME3');
-  // TODO: Assemble Python into code variable.
-  var code = 'if '+value_name1+':'+'\n'+
-statements_name2+
-'else:\n'+
-statements_name3;
-  return code;
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_NONE) || 'False'; // 取得條件，沒有連接時預設為 False
+  var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
+  var statements_name3 = Blockly.Python.statementToCode(block, 'NAME3');
+  var code = 'if ' + value_name1 + ':\n';
+  if (statements_name2) {
+    code += Blockly.Python.INDENT + statements_name2;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
+  code += 'else:\n';
+  if (statements_name3) {
+    code += Blockly.Python.INDENT + statements_name3;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
+  return code;
 };
 //<block type="elif"></block>
 //======================================
@@ -646,13 +661,15 @@ Blockly.Blocks['elif'] = {
   }
 };
 Blockly.Python['elif'] = function(block) {
-  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
-  var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
-  // TODO: Assemble Python into code variable.
-  var code = 'elif '+value_name1+':'+'\n'+
-statements_name2;
-  if(statements_name2.indexOf('\n')<0) code+="\n";
-  return code;
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_NONE) || 'False'; // 取得條件，沒有連接時預設為 False
+  var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
+  var code = 'elif ' + value_name1 + ':\n';
+  if (statements_name2) {
+    code += Blockly.Python.INDENT + statements_name2;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
+  return code;
 };
 
 //<block type="else"></block>
@@ -673,9 +690,12 @@ Blockly.Blocks['else'] = {
 };
 Blockly.Python['else'] = function(block) {
   var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
-  // TODO: Assemble Python into code variable.
-  var code = 'else :\n'+
-				statements_name2;
+  var code = 'else:\n';
+  if (statements_name2) {
+    code += Blockly.Python.INDENT + statements_name2;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
   return code;
 };
 //<block type="if"></block>
@@ -698,13 +718,14 @@ Blockly.Blocks['if'] = {
   }
 };
 Blockly.Python['if'] = function(block) {
-  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_NONE) || 'False'; // 取得條件，沒有連接時預設為 False
   var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
-  // TODO: Assemble Python into code variable.
-  var code = 'if '+value_name1+':'
-  if(statements_name2.indexOf('\n')<0)
-    code+=statements_name2+"\n";
-  else	code+='\n'+statements_name2;
+  var code = 'if ' + value_name1 + ':\n';
+  if (statements_name2) {
+    code += Blockly.Python.INDENT + statements_name2;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
   return code;
 };
 //<block type="python_logic_operation"></block>
@@ -853,10 +874,14 @@ Blockly.Blocks['while'] = {
   }
 };
 Blockly.Python['while'] = function(block) {
-  var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC);
+  var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_NONE) || 'True'; // 取得條件，沒有連接時預設為 True
   var statements_name1 = Blockly.Python.statementToCode(block, 'NAME1');
-  // TODO: Assemble Python into code variable.
-  var code = 'while '+value_name+':\n'+statements_name1;
+  var code = 'while ' + value_name + ':\n';
+  if (statements_name1) {
+    code += Blockly.Python.INDENT + statements_name1;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
   return code;
 };
 
@@ -884,12 +909,20 @@ Blockly.Blocks['try_except'] = {
 };
 Blockly.Python['try_except'] = function(block) {
   var statements_name1 = Blockly.Python.statementToCode(block, 'NAME1');
-  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC) || 'e'; // 取得異常變數，沒有連接時預設為 'e'
   var statements_name3 = Blockly.Python.statementToCode(block, 'NAME3');
-  // TODO: Assemble Python into code variable.
-  var code = 'try:\n'+statements_name1+
-			'except Exception as '+value_name2+':\n'+
-			statements_name3;
+  var code = 'try:\n';
+  if (statements_name1) {
+    code += Blockly.Python.INDENT + statements_name1;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
+  code += 'except Exception as ' + value_name2 + ':\n';
+  if (statements_name3) {
+    code += Blockly.Python.INDENT + statements_name3;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
   return code;
 };
 
@@ -914,10 +947,18 @@ Blockly.Blocks['try_except_zero'] = {
 Blockly.Python['try_except_zero'] = function(block) {
   var statements_name1 = Blockly.Python.statementToCode(block, 'NAME1');
   var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
-  // TODO: Assemble Python into code variable.
-  var code = 'try:\n'+statements_name1+
-			'except:\n'+
-			statements_name2;
+  var code = 'try:\n';
+  if (statements_name1) {
+    code += Blockly.Python.INDENT + statements_name1;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
+  code += 'except:\n';
+  if (statements_name2) {
+    code += Blockly.Python.INDENT + statements_name2;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
   return code;
 };
 
@@ -1125,13 +1166,15 @@ Blockly.Blocks['for_i_in_'] = {
   }
 };
 Blockly.Python['for_i_in_'] = function(block) {
-  //var variable_name2 = Blockly.JavaScript.nameDB_.getName(block.getFieldValue('NAME2'), Blockly.Variables.NAME_TYPE);
   var variable_name2 = Blockly.Python.nameDB_.getName(block.getFieldValue('NAME2'), Blockly.Names.NameType.VARIABLE);
-  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC) || 'range(10)'; // 取得可迭代對象，沒有連接時預設為 range(10)
   var statements_3 = Blockly.Python.statementToCode(block, '3');
-  // TODO: Assemble JavaScript into code variable.
-  var code = 'for '+variable_name2+' in '+value_name1+':\n'+statements_3;
-			
+  var code = 'for ' + variable_name2 + ' in ' + value_name1 + ':\n';
+  if (statements_3) {
+    code += Blockly.Python.INDENT + statements_3;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
   return code;
 };
 //=================================================
@@ -1745,10 +1788,14 @@ Blockly.Blocks['block_def'] = {
   }
 };
 Blockly.Python['block_def'] = function(block) {
-  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC) || 'function_name'; // 取得函數名稱，沒有連接時預設為 'function_name'
   var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
-  // TODO: Assemble Python into code variable.
-  var code = "def "+value_name1+':\n'+statements_name2;
+  var code = 'def ' + value_name1 + '():\n'; // 加上括號，即使沒有參數也是合法的函數定義
+  if (statements_name2) {
+    code += Blockly.Python.INDENT + statements_name2;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
   return code;
 };
 //<block type="block_class"></block>
@@ -1794,13 +1841,16 @@ Blockly.Blocks['any_indent_statement'] = {
   }
 };
 Blockly.Python['any_indent_statement'] = function(block) {
-  var text_name = block.getFieldValue('NAME');
+  var text_name = block.getFieldValue('NAME').trim(); // 取得輸入並去除前後空白
   var statements_name = Blockly.Python.statementToCode(block, 'NAME');
-  // TODO: Assemble Python into code variable.
-  var code = text_name+'\n'+statements_name;
+  var code = text_name + '\n';
+  if (statements_name) {
+    code += Blockly.Python.INDENT + statements_name;
+  } else if (text_name.endsWith(':')) {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
   return code;
 };
-
 //<block type="create_arrayin"></block>
 //======================================
 Blockly.Blocks['create_arrayin'] = {
@@ -1847,13 +1897,15 @@ Blockly.Blocks['for_loop'] = {
   }
 };
 Blockly.Python['for_loop'] = function(block) {
-  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
-  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC) || '_'; // 取得迴圈變數，沒有連接時預設為 '_'
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC) || '[]'; // 取得可迭代對象，沒有連接時預設為空列表 '[]'
   var statements_name3 = Blockly.Python.statementToCode(block, 'NAME3');
-  // TODO: Assemble Python into code variable.
-  var code = 'for '+value_name1+' in '+
-			value_name2+ ':\n'+
-			statements_name3+'\n';
+  var code = 'for ' + value_name1 + ' in ' + value_name2 + ':\n';
+  if (statements_name3) {
+    code += Blockly.Python.INDENT + statements_name3;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
   return code;
 };
 //<block type="block_equal_"></block>
