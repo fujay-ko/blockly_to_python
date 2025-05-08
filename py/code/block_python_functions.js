@@ -620,14 +620,21 @@ Blockly.Blocks['ifelse'] = {
   }
 };
 Blockly.Python['ifelse'] = function(block) {
-  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_NONE) || 'False'; // 取得條件，沒有連接時預設為 False
   var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
   var statements_name3 = Blockly.Python.statementToCode(block, 'NAME3');
-  // TODO: Assemble Python into code variable.
-  var code = 'if '+value_name1+':'+'\n'+
-				statements_name2+
-				'else:\n'+
-				statements_name3;
+  var code = 'if ' + value_name1 + ':\n';
+  if (statements_name2) {
+    code += Blockly.Python.INDENT + statements_name2;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
+  code += 'else:\n';
+  if (statements_name3) {
+    code += Blockly.Python.INDENT + statements_name3;
+  } else {
+    code += Blockly.Python.INDENT + 'pass\n';
+  }
   return code;
 };
 //<block type="elif"></block>
