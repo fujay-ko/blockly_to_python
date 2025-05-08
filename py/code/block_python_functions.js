@@ -574,7 +574,7 @@ Blockly.Python['str_'] = function(block) {
 
 //<block type="block__single"></block>
 //======================================
-Blockly.Blocks['block__single'] = {
+Blockly.Blocks['block_if_single'] = {
   init: function() {
     this.appendValueInput("NAME")
         .setCheck(null)
@@ -586,15 +586,11 @@ Blockly.Blocks['block__single'] = {
  this.setHelpUrl("");
   }
 };
-Blockly.Python['block__single'] = function(block) {
-  var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC);
-  var code = ' ';
-   (value_name) {
-    code += value_name + ':\n  pass\n';
-  } else {
-    code += 'True:\n  pass\n'; // 為了保證語法正確，即使沒有條件也需要一個永遠為真的條件
-  }
-  return code;
+Blockly.Python['block_if_single'] = function(block) {
+  var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = 'if '+value_name+'\n';
+  return code;
 };
 //<block type="ifelse"></block>
 //======================================
@@ -620,22 +616,15 @@ Blockly.Blocks['ifelse'] = {
   }
 };
 Blockly.Python['ifelse'] = function(block) {
-  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_NONE) || 'False'; // 取得條件，沒有連接時預設為 False
-  var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
-  var statements_name3 = Blockly.Python.statementToCode(block, 'NAME3');
-  var code = 'if ' + value_name1 + ':\n';
-  if (statements_name2) {
-    code += Blockly.Python.INDENT + statements_name2;
-  } else {
-    code += Blockly.Python.INDENT + 'pass\n';
-  }
-  code += 'else:\n';
-  if (statements_name3) {
-    code += Blockly.Python.INDENT + statements_name3;
-  } else {
-    code += Blockly.Python.INDENT + 'pass\n';
-  }
-  return code;
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
+  var statements_name3 = Blockly.Python.statementToCode(block, 'NAME3');
+  // TODO: Assemble Python into code variable.
+  var code = 'if '+value_name1+':'+'\n'+
+statements_name2+
+'else:\n'+
+statements_name3;
+  return code;
 };
 //<block type="elif"></block>
 //======================================
@@ -657,15 +646,13 @@ Blockly.Blocks['elif'] = {
   }
 };
 Blockly.Python['elif'] = function(block) {
-  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_NONE) || 'False'; // 取得條件，沒有連接時預設為 False
-  var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
-  var code = 'elif ' + value_name1 + ':\n';
-  if (statements_name2) {
-    code += Blockly.Python.INDENT + statements_name2;
-  } else {
-    code += Blockly.Python.INDENT + 'pass\n';
-  }
-  return code;
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
+  // TODO: Assemble Python into code variable.
+  var code = 'elif '+value_name1+':'+'\n'+
+statements_name2;
+  if(statements_name2.indexOf('\n')<0) code+="\n";
+  return code;
 };
 
 //<block type="else"></block>
