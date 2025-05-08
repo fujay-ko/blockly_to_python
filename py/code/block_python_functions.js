@@ -2333,3 +2333,27 @@ Blockly.Python['block_print_single'] = function(block) {
   var code = 'print(' + value_name + ')\n';
   return code;
 };
+//<block type="fstring_format_block"></block>
+//======================================
+Blockly.Blocks['fstring_format_block'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField(":")
+        .appendField(new Blockly.FieldTextInput(""), "NAME2");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(80);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['fstring_format_block'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var text_name2 = block.getFieldValue('NAME2');
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + ':' + text_name2 ;
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
