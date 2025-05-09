@@ -1965,7 +1965,7 @@ Blockly.Blocks['list_value'] = {
   init: function() {
     this.appendValueInput("NAME1")
         .setCheck(null)
-        .appendField(new Blockly.FieldDropdown([["len","len"], ["min","min"], ["max","max"], ["sum","sum"], ["sorted","sorted"], ["zip","zip"], ["enumerate","enumerate"], ["iter","iter"], ["next","next"]]), "NAME2")
+        .appendField(new Blockly.FieldDropdown([["len","len"], ["min","min"], ["max","max"], ["sum","sum"], ["sorted","sorted"], ["zip","zip"], ["enumerate","enumerate"], ["iter","iter"], ["next","next"], ["any","any"], ["all","all"], ["filter","filter"], ["slice","slice"]]), "NAME2")
         .appendField("(");
     this.appendDummyInput()
         .appendField(")");
@@ -2355,6 +2355,53 @@ Blockly.Python['fstring_format_block'] = function(block) {
   var text_name2 = block.getFieldValue('NAME2');
   // TODO: Assemble Python into code variable.
   var code = value_name1 + ':' + text_name2 ;
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+//<block type="python_dict"></block>
+Blockly.Blocks['python_dict'] = {
+  init: function() {
+    this.appendValueInput("python_dict_V")
+        .setCheck(null)
+        .appendField("dict(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_container_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Python['python_dict'] = function(block) {
+  var value_python_dict_v = Blockly.Python.valueToCode(block, 'python_dict_V', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = 'dict('+value_python_dict_v+')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="python_set"></block>
+Blockly.Blocks['python_set'] = {
+  init: function() {
+    this.appendValueInput("python_set_V")
+        .setCheck(null)
+        .appendField("set(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_container_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Python['python_set'] = function(block) {
+  var value_python_dict_v = Blockly.Python.valueToCode(block, 'python_set_V', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = 'set('+value_python_dict_v+')';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.Python.ORDER_ATOMIC];
 };

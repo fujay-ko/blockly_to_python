@@ -215,8 +215,10 @@
 			<block type="text_reverse"><value name="TEXT"><shadow type="text"></shadow></value></block>
 		</category>
 	  
-	  	<category name="容器" colour="%{BKY_LISTS_HUE}">
+	  <category name="容器" colour="%{BKY_LISTS_HUE}">
 			<block type="python_list"></block>
+      <block type="python_dict"></block>
+      <block type="python_set"></block>
 			<block type="list_value"></block>
 			<block type="list_operations"></block>
 			<block type="list_for_input_1d"></block>
@@ -238,9 +240,9 @@
 			<block type="python_big_parantheses"></block>
 			<block type="create_arrayin"></block>
 			<block type="python_in"></block>
-	  	</category>
+	  </category>
 
-	  	<category name="符號逗號連接" colour="%{BKY_LISTS_HUE}">
+	  <category name="符號逗號連接" colour="%{BKY_LISTS_HUE}">
 			<block type="python_any"><field name="NAME"></field></block>
 			<!--上下連接-->
 			<block type="tb_connection"></block>
@@ -261,10 +263,10 @@
 			<block type="block_comma8"></block>
 			<block type="block_comma9"></block>
 			<block type="block_comma10"></block>
-	  	</category>
+	  </category>
 	
 	  	<!--<category name="%{BKY_CATMATH}" colour="%{BKY_MATH_HUE}">-->
-	  	<category name="數學式" colour="%{BKY_MATH_HUE}">
+	  <category name="數學式" colour="%{BKY_MATH_HUE}">
 			<block type="operator"></block>
 			<block type="compound_operator"></block>
 			<block type="bitwise_Operation"></block>
@@ -274,9 +276,11 @@
 			<block type="math_single"><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value></block>
 			<block type="math_trig"> <value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value></block>
 			<block type="math_constant"></block>	
-	  	</category> 
+	  </category> 
 	  
-	  	<category name="變數" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>
+	  <category name="變數" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE">
+
+    </category>
 	  	
 		<category name="變數賦值" colour="%{BKY_VARIABLES_HUE}">
 			<block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">v</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">0</field></block></value></block><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">check</field></block></value><value name="NAME2"><block type="logic_boolean"><field name="NAME1">True</field></block></value></block><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">temp</field></block></value><value name="NAME2"><block type="block_fstring"><field name="NAME1"></field></block></value></block>
@@ -320,9 +324,9 @@
 			<block type="block_any_line"><field name="NAME"># 範例：偵測到p鍵按後，跳出重窮迴圈</field><next><block type="block_any_line"><field name="NAME">import keyboard</field><next><block type="while"><value name="NAME"><block type="logic_boolean"><field name="NAME1">True</field></block></value><statement name="NAME1"><block type="if"><value name="NAME1"><block type="logic_operation"><field name="NAME3">==</field><value name="NAME1"><block type="any_func_value"><field name="NAME">keyboard.is_pressed</field><value name="NAME"><block type="python_any"><field name="NAME">'p'</field></block></value></block></value><value name="NAME2"><block type="logic_boolean"><field name="NAME1">True</field></block></value></block></value><statement name="NAME2"><block type="python_break"></block></statement></block></statement></block></next></block></next></block>
 			<block type="try_except"><value name="NAME2"><block type="variables_get"><field name="VAR">e</field></block></value></block>
 			<block type="try_except_zero"></block>
-		  </category>
+		</category>
 	 	 <!--<category name="%{BKY_CATVARIABLES}" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>-->
-	  	<category name="輸入輸出" colour="#8ca55b">
+	  <category name="輸入輸出" colour="#8ca55b">
 			<block type="block_input"></block>
 			<block type="block_any_line"><field name="NAME"># 使用者輸入以字串的型式存入A</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">A</field></block></value><value name="NAME2"><block type="block_input"><value name="NAME"><block type="block_string"><field name="NAME"></field></block></value></block></value></block></next></block>
 			<block type="block_any_line"><field name="NAME"># 參數</field><next><block type="block_print_all"><field name="NAME2">sep = " "</field><field name="NAME3">end = "\n"</field></block></next></block>
@@ -346,9 +350,9 @@
 			<block type="block_any_line"><field name="NAME"># 一維串列生成式</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">a_list</field></block></value><value name="NAME2"><block type="list_for_input_1d"><value name="NAME1"><block type="python_int"><value name="python_int_V"><block type="python_any"><field name="NAME"></field></block></value></block></value><value name="NAME2"><block type="python_any"><field name="NAME"></field></block></value><value name="NAME3"><block type="string_split"><field name="NAME2"></field><value name="NAME1"><shadow type="text"><field name="TEXT">1  2  3  4</field></shadow><block type="block_input"></block></value></block></value></block></value></block></next></block>
 			<block type="block_any_line"><field name="NAME"># 二維串列生成式</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">a_list</field></block></value><value name="NAME2"><block type="list_for_input_1d"><value name="NAME1"><block type="list_for_input_1d"><value name="NAME1"><block type="python_int"><value name="python_int_V"><block type="python_any"><field name="NAME">x</field></block></value></block></value><value name="NAME2"><block type="python_any"><field name="NAME">x</field></block></value><value name="NAME3"><block type="string_split"><field name="NAME2"></field><value name="NAME1"><shadow type="text"><field name="TEXT">1  2  3  4</field></shadow><block type="block_input"></block></value></block></value></block></value><value name="NAME2"><block type="python_any"><field name="NAME">y</field></block></value><value name="NAME3"><block type="python_range"><value name="NAME"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block></value></block></value></block></next></block>
 			<block type="block_any_line"><field name="NAME"># 二維串列生成</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">a_list</field></block></value><value name="NAME2"><block type="create_arrayin"></block></value><next><block type="for_i_in_"><field name="NAME2">i</field><value name="NAME1"><block type="python_range"><value name="NAME"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block></value><statement name="3"><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">temp</field></block></value><value name="NAME2"><block type="list_for_input_1d"><value name="NAME1"><block type="python_int"><value name="python_int_V"><block type="python_any"><field name="NAME">y</field></block></value></block></value><value name="NAME2"><block type="python_any"><field name="NAME">y</field></block></value><value name="NAME3"><block type="string_split"><field name="NAME2"></field><value name="NAME1"><shadow type="text"><field name="TEXT">1  2  3  4</field></shadow><block type="block_input"></block></value></block></value></block></value><next><block type="list_append"><value name="list_append_V1"><block type="variables_get"><field name="VAR">a_list</field></block></value><value name="list_append_V2"><block type="variables_get"><field name="VAR">temp</field></block></value></block></next></block></statement></block></next></block></next></block>
-	  	</category>
+	  </category>
 	  
-	  	<category name="類型轉換" colour="#8ca55b">
+	  <category name="類型轉換" colour="#8ca55b">
 			<!--#function 有介接指定-->
 			<block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME"></field></block></value><value name="NAME2"><block type="python_any"><field name="NAME"></field></block></value></block>
 			<!--#function 無介接指定-->
@@ -428,15 +432,19 @@
 		</category>
 	  
 	  <sep></sep>
-	  	  	<category name="{catVariables}" colour="330" custom="VARIABLE"></category>
-	  		<category name="{catFunctions}" colour="290" custom="PROCEDURE"></category>
+	  	<category name="{catVariables}" colour="330" custom="VARIABLE">
+
+      </category>
+	  	<category name="{catFunctions}" colour="290" custom="PROCEDURE">
+
+      </category>
   	</xml>
 </div>
   
   <!-- 右側區塊：包含 CodeMirror 與切換按鈕 -->
   <div class="right-section" id="rightSection">
-	<button class="toggle-button" id="toggleButton">&#9658;</button>
-	<textarea class="CodeMirror" placeholder="程式碼..."></textarea>	    
+	  <button class="toggle-button" id="toggleButton">&#9658;</button>
+	  <textarea class="CodeMirror" placeholder="程式碼..."></textarea>	    
   </div>
   
   <!-- 引入 CodeMirror 程式庫 -->

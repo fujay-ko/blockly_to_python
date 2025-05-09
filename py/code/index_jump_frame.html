@@ -365,15 +365,15 @@
     </category>
   
     <category name="迴圈" colour="%{BKY_LOOPS_HUE}">
-          <block type="block_any_line"><field name="NAME"># 重複指定次數</field><next><block type="for_loop"></block></next></block>
-          <block type="for_i_in_"></block>
-          <block type="python_range"><value name="NAME"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block>
-          <block type="python_range2"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block>
-          <block type="python_range3"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">5</field></shadow></value><value name="NAME3"><shadow block type="math_number"><field name="NUM">1</field></shadow></value></block>
-          <block type="while"></block>
+      <block type="block_any_line"><field name="NAME"># 重複指定次數</field><next><block type="for_loop"></block></next></block>
+      <block type="for_i_in_"></block>
+      <block type="python_range"><value name="NAME"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block>
+      <block type="python_range2"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block>
+      <block type="python_range3"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">5</field></shadow></value><value name="NAME3"><shadow block type="math_number"><field name="NUM">1</field></shadow></value></block>
+      <block type="while"></block>
       <block type="block_any_line"><field name="NAME"># 重複無限次</field><next><block type="while"><value name="NAME"><block type="logic_boolean"><field name="NAME1">True</field></block></value></block></next></block>
       <block type="python_any"><field name="NAME"></field></block>
-      </category>
+    </category>
   
     <category name="字串" colour="%{BKY_TEXTS_HUE}">
       <!--字串雙引號-->
@@ -398,32 +398,34 @@
     </category>
     
     <category name="容器" colour="%{BKY_LISTS_HUE}">
-      <category name="符號逗號連接" colour="%{BKY_LISTS_HUE}">
-        <block type="python_any"><field name="NAME"></field></block>
-        <!--註解-->
-        <block type="block_any_line"><field name="NAME"># 註解</field></block>
-        <!--上下連接-->
-        <block type="tb_connection"></block>
-        <!--#any statement-->
-        <block type="python_any_statement"></block>
-        <!--transform to statement-->
-        <block type="python_transform_mode"></block>
-        <!-- . -->
-        <block type="block_get_anyconcat"></block>
-        <!-- . -->
-        <block type="block_dot1"></block>
-        <block type="block_comma2"></block>
-        <block type="block_comma3"></block>
-        <block type="block_comma4"></block>
-        <block type="block_comma5"></block>
-        <block type="block_comma6"></block>
-        <block type="block_comma7"></block>
-        <block type="block_comma8"></block>
-        <block type="block_comma9"></block>
-        <block type="block_comma10"></block>
-      </category>
+    <category name="符號逗號連接" colour="%{BKY_LISTS_HUE}">
+      <block type="python_any"><field name="NAME"></field></block>
+      <!--註解-->
+      <block type="block_any_line"><field name="NAME"># 註解</field></block>
+      <!--上下連接-->
+      <block type="tb_connection"></block>
+      <!--#any statement-->
+      <block type="python_any_statement"></block>
+      <!--transform to statement-->
+      <block type="python_transform_mode"></block>
+      <!-- . -->
+     <block type="block_get_anyconcat"></block>
+      <!-- . -->
+      <block type="block_dot1"></block>
+      <block type="block_comma2"></block>
+      <block type="block_comma3"></block>
+      <block type="block_comma4"></block>
+      <block type="block_comma5"></block>
+      <block type="block_comma6"></block>
+      <block type="block_comma7"></block>
+      <block type="block_comma8"></block>
+      <block type="block_comma9"></block>
+      <block type="block_comma10"></block>
+     </category>
     
       <block type="python_list"></block>
+      <block type="python_dict"></block>
+      <block type="python_set"></block>
       <block type="list_value"></block>
       <block type="list_operations"></block>
       <block type="list_for_input_1d"></block>
@@ -461,40 +463,38 @@
     </category> 
     
     <category name="變數" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE">
-        
+    
     </category>
     <category name="變數賦值" colour="%{BKY_VARIABLES_HUE}">
-          <block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">v</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">0</field></block></value></block><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">check</field></block></value><value name="NAME2"><block type="logic_boolean"><field name="NAME1">True</field></block></value></block><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">temp</field></block></value><value name="NAME2"><block type="block_fstring"><field name="NAME1"></field></block></value></block>
-          <block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">temp</field></block></value><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">min</field></block></value><value name="NAME2"><block type="list_by3"><value name="VALUE_DIM1"><shadow type="math_number"><field name="NUM">3</field></shadow></value><value name="VALUE_DIM2"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="VALUE_DIM3"><shadow type="math_number"><field name="NUM">2</field></shadow></value></block></value></block></value></block>
-          <!--等號指定值-->
-          <block type="block_assign"></block>
-          <!--等號左結合-->
-          <block type="block_equal_"></block>
-          <!-- = -->
-          <block type="block_anyconcat"></block>
+      <block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">v</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">0</field></block></value></block><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">check</field></block></value><value name="NAME2"><block type="logic_boolean"><field name="NAME1">True</field></block></value></block><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">temp</field></block></value><value name="NAME2"><block type="block_fstring"><field name="NAME1"></field></block></value></block>
+      <block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">temp</field></block></value><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">min</field></block></value><value name="NAME2"><block type="list_by3"><value name="VALUE_DIM1"><shadow type="math_number"><field name="NUM">3</field></shadow></value><value name="VALUE_DIM2"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="VALUE_DIM3"><shadow type="math_number"><field name="NUM">2</field></shadow></value></block></value></block></value></block>
+      <!--等號指定值-->
+      <block type="block_assign"></block>
+      <!--等號左結合-->
+      <block type="block_equal_"></block>
+      <!-- = -->
+      <block type="block_anyconcat"></block>
       <block type="variables_get"><field name="VAR">a_list</field></block>
       <block type="variables_get"><field name="VAR">num</field></block>
-      </category>	
+    </category>	
     
     
     <category name="函式" colour="%{BKY_PROCEDURES_HUE}">
-      
-      <category name="套件" colour="%{BKY_PROCEDURES_HUE}">
-        <block type="import_var"><value name="NAME2"><block type="python_any"><field name="NAME">time</field></block></value></block>
-        <!--#import as-->
-        <block type="import_as"><value name="NAME1"><block type="python_any"><field name="NAME"></field></block></value><value name="NAME2"><block type="python_any"><field name="NAME"></field></block></value></block>
-        <!--#隨機取0~9之間的整數-->
-        <block type="from_import"><value name="NAME1"><block type="python_any"><field name="NAME">random</field></block></value><value name="NAME2"><block type="python_any"><field name="NAME">randint</field></block></value><next><block type="python_any_statement"><field name="NAME1">#隨機取0~9之間的整數</field><next><block type="block_anyconcat"><field name="NAME2">=</field><value name="NAME1"><block type="variables_get"><field name="VAR">r</field></block></value><value name="NAME3"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">randint</field></block></value><value name="NAME2"><block type="block_comma"><value name="NAME1"><block type="math_number"><field name="NUM">0</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">9</field></block></value></block></value></block></value></block></next></block></next></block>
-        <!--<block type="controls_if"></block>-->
-        <!--<block type="logic_compare"></block>-->
-        <block type="import_var"><value name="NAME2"><block type="python_any"><field name="NAME">random</field></block></value><next><block type="block_any_line"><field name="NAME">#隨機生成0~3的整數指定給i</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">i</field></block></value><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">random.randint</field></block></value><value name="NAME2"><block type="block_comma2"><value name="NAME1"><block type="math_number"><field name="NUM">0</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">3</field></block></value></block></value></block></value><next><block type="block_any_line"><field name="NAME">#如果i等於0</field><next><block type="if"><value name="NAME1"><block type="logic_operation"><field name="NAME3">==</field><value name="NAME1"><block type="variables_get"><field name="VAR">i</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">0</field></block></value></block></value><statement name="NAME2"><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="block_string"><field name="NAME">i等於0</field></block></value></block></statement><next><block type="block_any_line"><field name="NAME">#否則如果i等於1</field><next><block type="elif"><value name="NAME1"><block type="logic_operation"><field name="NAME3">==</field><value name="NAME1"><block type="variables_get"><field name="VAR">i</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">1</field></block></value></block></value><statement name="NAME2"><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="block_string"><field name="NAME">i等於1</field></block></value></block></statement><next><block type="block_any_line"><field name="NAME">#否則(以上條件皆沒發生)</field><next><block type="else"><statement name="NAME2"><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="block_string"><field name="NAME">其它狀況</field></block></value></block></statement></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block>
-        <!--<block type="logic_null"></block>-->
-        <!--<block type="logic_ternary"></block>-->
-        <block type="block_any_line"><field name="NAME"># 範例：偵測到p鍵按後，跳出重窮迴圈</field><next><block type="block_any_line"><field name="NAME">import keyboard</field><next><block type="while"><value name="NAME"><block type="logic_boolean"><field name="NAME1">True</field></block></value><statement name="NAME1"><block type="if"><value name="NAME1"><block type="logic_operation"><field name="NAME3">==</field><value name="NAME1"><block type="any_func_value"><field name="NAME">keyboard.is_pressed</field><value name="NAME"><block type="python_any"><field name="NAME">'p'</field></block></value></block></value><value name="NAME2"><block type="logic_boolean"><field name="NAME1">True</field></block></value></block></value><statement name="NAME2"><block type="python_break"></block></statement></block></statement></block></next></block></next></block>
-        <block type="try_except"><value name="NAME2"><block type="variables_get"><field name="VAR">e</field></block></value></block>
-        <block type="try_except_zero"></block>
-      </category>	
-  
+    <category name="套件" colour="%{BKY_PROCEDURES_HUE}">
+      <block type="import_var"><value name="NAME2"><block type="python_any"><field name="NAME">time</field></block></value></block>
+      <!--#import as-->
+      <block type="import_as"><value name="NAME1"><block type="python_any"><field name="NAME"></field></block></value><value name="NAME2"><block type="python_any"><field name="NAME"></field></block></value></block>
+      <!--#隨機取0~9之間的整數-->
+      <block type="from_import"><value name="NAME1"><block type="python_any"><field name="NAME">random</field></block></value><value name="NAME2"><block type="python_any"><field name="NAME">randint</field></block></value><next><block type="python_any_statement"><field name="NAME1">#隨機取0~9之間的整數</field><next><block type="block_anyconcat"><field name="NAME2">=</field><value name="NAME1"><block type="variables_get"><field name="VAR">r</field></block></value><value name="NAME3"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">randint</field></block></value><value name="NAME2"><block type="block_comma"><value name="NAME1"><block type="math_number"><field name="NUM">0</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">9</field></block></value></block></value></block></value></block></next></block></next></block>
+      <!--<block type="controls_if"></block>-->
+      <!--<block type="logic_compare"></block>-->
+      <block type="import_var"><value name="NAME2"><block type="python_any"><field name="NAME">random</field></block></value><next><block type="block_any_line"><field name="NAME">#隨機生成0~3的整數指定給i</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">i</field></block></value><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">random.randint</field></block></value><value name="NAME2"><block type="block_comma2"><value name="NAME1"><block type="math_number"><field name="NUM">0</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">3</field></block></value></block></value></block></value><next><block type="block_any_line"><field name="NAME">#如果i等於0</field><next><block type="if"><value name="NAME1"><block type="logic_operation"><field name="NAME3">==</field><value name="NAME1"><block type="variables_get"><field name="VAR">i</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">0</field></block></value></block></value><statement name="NAME2"><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="block_string"><field name="NAME">i等於0</field></block></value></block></statement><next><block type="block_any_line"><field name="NAME">#否則如果i等於1</field><next><block type="elif"><value name="NAME1"><block type="logic_operation"><field name="NAME3">==</field><value name="NAME1"><block type="variables_get"><field name="VAR">i</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">1</field></block></value></block></value><statement name="NAME2"><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="block_string"><field name="NAME">i等於1</field></block></value></block></statement><next><block type="block_any_line"><field name="NAME">#否則(以上條件皆沒發生)</field><next><block type="else"><statement name="NAME2"><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="block_string"><field name="NAME">其它狀況</field></block></value></block></statement></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block>
+      <!--<block type="logic_null"></block>-->
+      <!--<block type="logic_ternary"></block>-->
+      <block type="block_any_line"><field name="NAME"># 範例：偵測到p鍵按後，跳出重窮迴圈</field><next><block type="block_any_line"><field name="NAME">import keyboard</field><next><block type="while"><value name="NAME"><block type="logic_boolean"><field name="NAME1">True</field></block></value><statement name="NAME1"><block type="if"><value name="NAME1"><block type="logic_operation"><field name="NAME3">==</field><value name="NAME1"><block type="any_func_value"><field name="NAME">keyboard.is_pressed</field><value name="NAME"><block type="python_any"><field name="NAME">'p'</field></block></value></block></value><value name="NAME2"><block type="logic_boolean"><field name="NAME1">True</field></block></value></block></value><statement name="NAME2"><block type="python_break"></block></statement></block></statement></block></next></block></next></block>
+      <block type="try_except"><value name="NAME2"><block type="variables_get"><field name="VAR">e</field></block></value></block>
+      <block type="try_except_zero"></block>
+    </category>	
       <block type="block_any_line"><field name="NAME">'''</field><next><block type="block_any_line"><field name="NAME">傳入「函式」的「參數」要用逗號隔開</field><next><block type="block_any_line"><field name="NAME">每個「函式」都會有名稱，ex:下面範例的函式名稱叫做Sum</field><next><block type="block_any_line"><field name="NAME">'''</field></block></next></block></next></block></next></block>
       <block type="block_any_line"><field name="NAME"># 自訂義函式 Sum，傳入 a, b 回傳 a+b</field><next><block type="block_def"><value name="NAME1"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">Sum</field></block></value><value name="NAME2"><block type="block_comma2"><value name="NAME1"><block type="variables_get"><field name="VAR">a</field></block></value><value name="NAME2"><block type="variables_get"><field name="VAR">b</field></block></value></block></value></block></value><statement name="NAME2"><block type="block_any_line"><field name="NAME"># 回傳</field><next><block type="block_return_"><value name="NAME2"><block type="math_arithmetic"><field name="OP">ADD</field><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow><block type="variables_get"><field name="VAR">a</field></block></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow><block type="variables_get"><field name="VAR">b</field></block></value></block></value></block></next></block></statement><next><block type="block_any_line"><field name="NAME"># 呼叫 Sum 把 2 和 3 相加得到 5 並印出來</field><next><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">Sum</field></block></value><value name="NAME2"><block type="block_comma2"><value name="NAME1"><block type="math_number"><field name="NUM">2</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">3</field></block></value></block></value></block></value></block></next></block></next></block></next></block>
       <!--def function :statement-->
@@ -507,7 +507,6 @@
       <block type="block_return_"><value name="NAME2"><block type="variables_get"><field name="VAR">v</field></block></value></block>
       <block type="python_global"></block>
       <block type="obj_method"><field name="NAME1">mic</field><field name="NAME2">record</field><value name="NAME2"><block type="python_any"><field name="NAME">filename="1.wav",dur=25,TH=0.02,SilenceNum=50</field></block></value></block>
-    
     </category>
     <!--<category name="%{BKY_CATVARIABLES}" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>-->
     <category name="輸入輸出" colour="#8ca55b">
@@ -515,7 +514,7 @@
       <block type="block_any_line"><field name="NAME"># 使用者輸入以字串的型式存入A</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">A</field></block></value><value name="NAME2"><block type="block_input"><value name="NAME"><block type="block_string"><field name="NAME"></field></block></value></block></value></block></next></block>
       <block type="block_any_line"><field name="NAME"># 參數</field><next><block type="block_print_all"><field name="NAME2">sep = " "</field><field name="NAME3">end = "\n"</field></block></next></block>
       <block type="block_any_line"><field name="NAME"># 輸出換行</field><next><block type="print_newline"><field name="NAME2">end = "\n"</field></block></next></block>
-          <block type="block_any_line"><field name="NAME"># 輸出不換行</field><next><block type="print_No_line_breaks"><field name="NAME2">end = ""</field></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 輸出不換行</field><next><block type="print_No_line_breaks"><field name="NAME2">end = ""</field></block></next></block>
       <block type="block_func"><value name="NAME1"><block type="python_any"><field name="NAME">print</field></block></value><value name="NAME2"><block type="block_fstring"><field name="NAME1">123</field></block></value></block>
       <block type="block_print_single"></block>
       <block type="f_string_variable"></block>
@@ -549,8 +548,6 @@
       <block type="python_str"></block>
       <block type="python_map"></block>
       <block type="python_bytes"></block>
-    
-  
     </category>	
     
     <sep></sep>
