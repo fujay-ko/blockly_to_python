@@ -2405,3 +2405,374 @@ Blockly.Python['python_set'] = function(block) {
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.Python.ORDER_ATOMIC];
 };
+//<block type="from_import_dot"></block>
+//======================================
+Blockly.Blocks['from_import_dot'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null)
+        .appendField("from");
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(new Blockly.FieldLabelSerializable("."), "NAME1");
+    this.appendValueInput("NAME3")
+        .setCheck(null)
+        .appendField("import");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['from_import_dot'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+
+  // Assemble Python into code variable.
+  // This assumes NAME1 is the module, NAME2 is the submodule, and NAME3 is the item to import.
+  var code = 'from ' + value_name1 + '.' + value_name2 + ' import ' + value_name3 + '\n';
+  return code;
+};
+
+//<block type="minecraft_block_up"></block>
+//======================================
+Blockly.Blocks['minecraft_block_up'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(".");
+    this.appendValueInput("NAME3")
+        .setCheck(null)
+        .appendField("(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_block_up'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + '.'+ value_name2 +'('+ value_name3 +')\n';
+
+  return code;
+};
+
+//<block type="minecraft_block_left"></block>
+//======================================
+Blockly.Blocks['minecraft_block_left'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(".");
+    this.appendValueInput("NAME3")
+        .setCheck(null)
+        .appendField("(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_block_left'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + '.'+ value_name2 +'('+ value_name3 +')';
+
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+
+
+//<block type="minecraft_posttochat"></block>
+//======================================
+Blockly.Blocks['minecraft_posttochat'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(new Blockly.FieldLabelSerializable(".postToChat("), "NAME1")
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_posttochat'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var code = value_name1 + '.postToChat('+ value_name2 +')\n';
+  return code;
+};
+
+//<block type="minecraft_getblock"></block>
+//======================================
+Blockly.Blocks['minecraft_getblock'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(".getBlock(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_getblock'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + '.getBlock('+ value_name2 +')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+//<block type="minecraft_getblocks"></block>
+//======================================
+Blockly.Blocks['minecraft_getblocks'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(".getBlocks(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_getblocks'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + '.getBlocks('+ value_name2 +')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+//<block type="minecraft_setblock"></block>
+//======================================
+Blockly.Blocks['minecraft_setblock'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(".setBlock(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_setblock'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + '.setBlock('+ value_name2 +')\n';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return code
+};
+//<block type="minecraft_getblocks"></block>
+//======================================
+Blockly.Blocks['minecraft_setblocks'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(".setBlocks(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_setblocks'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + '.setBlocks('+ value_name2 +')\n';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return code;
+};
+//<block type="minecraft_getTilePos"></block>
+//======================================
+Blockly.Blocks['minecraft_getTilePos'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(".player.getTilePos(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_getTilePos'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + '.player.getTilePos('+ value_name2 +')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="minecraft_getPos"></block>
+//======================================
+Blockly.Blocks['minecraft_getPos'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(".player.getPos(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_getPos'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + '.player.getPos('+ value_name2 +')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="minecraft_setTilePos"></block>
+//======================================
+Blockly.Blocks['minecraft_setTilePos'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(".player.setTilePos(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_setTilePos'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + '.player.setTilePos('+ value_name2 +')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return code;
+};
+
+//<block type="minecraft_setPos"></block>
+//======================================
+Blockly.Blocks['minecraft_setPos'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(".player.setPos(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_setPos'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + '.player.setPos('+ value_name2 +')';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return code;
+};
+
+//<block type="minecraft_block"></block>
+//======================================
+Blockly.Blocks['minecraft_block'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendValueInput("NAME2")
+        .setCheck(null)
+        .appendField(".");
+    this.appendValueInput("NAME3")
+        .setCheck(null)
+        .appendField("(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(180);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['minecraft_block'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + '.'+ value_name2 +'('+ value_name3 +')';
+
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
