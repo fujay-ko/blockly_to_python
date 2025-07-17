@@ -451,9 +451,9 @@
   
     <!--<category name="%{BKY_CATMATH}" colour="%{BKY_MATH_HUE}">-->
     <category name="數學式" colour="%{BKY_MATH_HUE}">
-      <block type="operator"></block>
-      <block type="compound_operator"></block>
-      <block type="bitwise_Operation"></block>
+      <block type="operator"><field name="NAME3"> + </field><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
+      <block type="compound_operator"><field name="NAME3"> += </field><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
+      <block type="bitwise_Operation"><field name="NAME3"> | </field><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
       <block type="math_value_left"></block>
       <block type="math_number"><field name="NUM">0</field></block>
       <block type="math_arithmetic"><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>
