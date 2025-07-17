@@ -9,6 +9,7 @@ python_string_colour = 160;
 python_comment_colour = 30;
 python_symbol_colour = 150;
 python_frame_colour = 0;
+python_logic_colour2 = 200;
 
 //<block type="block_python_type"></block>
 //======================================
@@ -765,7 +766,7 @@ Blockly.Blocks['operator'] = {
         .appendField(new Blockly.FieldDropdown([["+"," + "], ["-"," - "], ["*"," * "], ["/"," / "], ["%"," % "], ["//"," // "],["**"," ** "]]), "NAME3");
 	  this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(python_logic_colour);
+    this.setColour(python_logic_colour2);
   this.setTooltip("");
   this.setHelpUrl("");
   }
