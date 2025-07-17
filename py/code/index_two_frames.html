@@ -330,16 +330,16 @@
 			<block type="block_input"></block>
 			<block type="block_any_line"><field name="NAME"># 使用者輸入以字串的型式存入A</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">A</field></block></value><value name="NAME2"><block type="block_input"><value name="NAME"><block type="block_string"><field name="NAME"></field></block></value></block></value></block></next></block>
 			<block type="block_any_line"><field name="NAME"># 使用者輸入以整數的型式存入B</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">B</field></block></value><value name="NAME2"><block type="python_int"><value name="python_int_V"><block type="block_input"><value name="NAME"><block type="block_string"><field name="NAME"></field></block></value></block></value></block></value></block></next></block>
-      <block type="block_any_line"><field name="NAME"># 使用者輸入以浮點數的型式存入C</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">C</field></block></value><value name="NAME2"><block type="python_float"><value name="python_float_V"><block type="block_input"><value name="NAME"><block type="block_string"><field name="NAME"></field></block></value></block></value></block></value></block></next></block>
-      <block type="block_any_line"><field name="NAME"># 參數</field><next><block type="block_print_all"><field name="NAME2">sep = " "</field><field name="NAME3">end = "\n"</field></block></next></block>
+      			<block type="block_any_line"><field name="NAME"># 使用者輸入以浮點數的型式存入C</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">C</field></block></value><value name="NAME2"><block type="python_float"><value name="python_float_V"><block type="block_input"><value name="NAME"><block type="block_string"><field name="NAME"></field></block></value></block></value></block></value></block></next></block>
+      			<block type="block_any_line"><field name="NAME"># 參數</field><next><block type="block_print_all"><field name="NAME2">sep = " "</field><field name="NAME3">end = "\n"</field></block></next></block>
 			<block type="block_any_line"><field name="NAME"># 輸出換行</field><next><block type="print_newline"><field name="NAME2">end = "\n"</field></block></next></block>
 			<block type="block_any_line"><field name="NAME"># 輸出不換行</field><next><block type="print_No_line_breaks"><field name="NAME2">end = ""</field></block></next></block>
-			<block type="block_func"><value name="NAME1"><block type="python_any"><field name="NAME">print</field></block></value><value name="NAME2"><block type="block_fstring"><field name="NAME1">123</field></block></value></block>
+			<block type="block_print_single"><value name="NAME"><block type="block_fstring"><field name="NAME1"></field></block></value></block>
 			<block type="block_print_single"></block>
-      <block type="f_string_variable"></block>
-      <block type="f_string_block"></block>
-      <block type="fstring_format_block"></block>
-      <block type="cammaconcat"><field name="NAME3"></field></block>
+      			<block type="f_string_variable"></block>
+      			<block type="f_string_block"></block>
+      			<block type="fstring_format_block"></block>
+      			<block type="cammaconcat"><field name="NAME3"></field></block>
 			<block type="python_any"></block>
 			<block type="tb_connection"></block>
 			<block type="block_any_line"><field name="NAME"># 把字串 "1234" 轉換成整數 1234 回存變數v</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">v</field></block></value><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="block_python_type"><field name="NAME1">int</field></block></value><value name="NAME2"><block type="block_string"><field name="NAME">1234</field></block></value></block></value></block></next></block>
