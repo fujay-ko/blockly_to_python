@@ -1146,6 +1146,115 @@ Blockly.Python['plus2'] = function(block) {
   var code = value_name1+'+'+value_name2;
   return [code, Blockly.Python.ORDER_ATOMIC];
 };
+
+//<block type="plus3"></block>
+//======================================
+Blockly.Blocks['plus3'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField("+");
+    this.appendValueInput("NAME2")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField("+");
+    this.appendValueInput("NAME3")
+        .setCheck(null);
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_string_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['plus3'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1+"+"+value_name2+"+"+value_name3;
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="plus4"></block>
+//======================================
+Blockly.Blocks['plus4'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField("+");
+    this.appendValueInput("NAME2")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField("+");
+    this.appendValueInput("NAME3")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField("+");
+    this.appendValueInput("NAME4")
+        .setCheck(null);
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_string_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['plus4'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+  var value_name4 = Blockly.Python.valueToCode(block, 'NAME4', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1+"+"+value_name2+"+"+value_name3+"+"+value_name4;
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
+//<block type="plus5"></block>
+//======================================
+Blockly.Blocks['plus5'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField("+");
+    this.appendValueInput("NAME2")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField("+");
+    this.appendValueInput("NAME3")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField("+");
+    this.appendValueInput("NAME4")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField("+");
+    this.appendValueInput("NAME5")
+        .setCheck(null);
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(python_string_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['plus5'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+  var value_name4 = Blockly.Python.valueToCode(block, 'NAME4', Blockly.Python.ORDER_ATOMIC);
+  var value_name5 = Blockly.Python.valueToCode(block, 'NAME5', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1+"+"+value_name2+"+"+value_name3+"+"+value_name4+"+"+value_name5;
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
 //=============================================
 Blockly.Blocks['for_i_in_'] = {
   init: function() {
