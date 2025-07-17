@@ -2192,7 +2192,8 @@ Blockly.Blocks['block_print_all'] = {
         .appendField(",")
         .appendField(new Blockly.FieldTextInput("sep = \" \""), "NAME2")
         .appendField(",")
-        .appendField(new Blockly.FieldTextInput("end = \"\\n\""), "NAME3");
+        .appendField(new Blockly.FieldTextInput("end = \"\\n\""), "NAME3")
+	.appendField(")");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
