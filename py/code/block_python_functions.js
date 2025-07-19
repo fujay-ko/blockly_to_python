@@ -802,10 +802,9 @@ Blockly.Python['compound_operator'] = function(block) {
   var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
   var dropdown_name3 = block.getFieldValue('NAME3');
   var value_name2 = Blockly.Python.valueToCode(block, 'NAME2', Blockly.Python.ORDER_ATOMIC);
-  // TODO: Assemble Python into code variable.
-  var code = value_name1+dropdown_name3+value_name2;
-  // TODO: Change ORDER_NONE to the correct strength.
-  return [code, Blockly.Python.ORDER_ATOMIC];
+  // 將程式碼組合成一個陳述式
+  var code = value_name1 + dropdown_name3 + value_name2 + '\n'; // 新增換行符號，確保陳述式獨立
+  return code; // 直接回傳程式碼字串
 };
 
 //<block type="bitwise_Operation"></block>
