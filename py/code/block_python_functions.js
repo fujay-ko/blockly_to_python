@@ -791,7 +791,8 @@ Blockly.Blocks['compound_operator'] = {
         .setCheck(null)
         .appendField(new Blockly.FieldDropdown([["+="," += "], ["-="," -= "], ["*="," *= "], ["/="," /= "], ["%="," %= "], ["//="," //= "],["**="," **= "]]), "NAME3");
 	  this.setInputsInline(true);
-    this.setOutput(true, null);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
     this.setColour(python_logic_colour);
   this.setTooltip("");
   this.setHelpUrl("");
