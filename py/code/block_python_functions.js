@@ -286,7 +286,7 @@ Blockly.Python['statement_var'] = function(block) {
   }
   code += ':\n';
   if (statements_name1) {
-    code += Blockly.Python.INDENT + statements_name1;
+    code += statements_name1;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
@@ -630,13 +630,13 @@ Blockly.Python['ifelse'] = function(block) {
   var statements_name3 = Blockly.Python.statementToCode(block, 'NAME3');
   var code = 'if ' + value_name1 + ':\n';
   if (statements_name2) {
-    code += Blockly.Python.INDENT + statements_name2;
+    code += statements_name2;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
   code += 'else:\n';
   if (statements_name3) {
-    code += Blockly.Python.INDENT + statements_name3;
+    code += statements_name3;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
@@ -666,7 +666,7 @@ Blockly.Python['elif'] = function(block) {
   var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
   var code = 'elif ' + value_name1 + ':\n';
   if (statements_name2) {
-    code += Blockly.Python.INDENT + statements_name2;
+    code += statements_name2;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
@@ -693,7 +693,7 @@ Blockly.Python['else'] = function(block) {
   var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
   var code = 'else:\n';
   if (statements_name2) {
-    code += Blockly.Python.INDENT + statements_name2;
+    code += statements_name2;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
@@ -723,7 +723,7 @@ Blockly.Python['if'] = function(block) {
   var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
   var code = 'if ' + value_name1 + ':\n';
   if (statements_name2) {
-    code += Blockly.Python.INDENT + statements_name2;
+    code += statements_name2;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
@@ -879,7 +879,7 @@ Blockly.Python['while'] = function(block) {
   var statements_name1 = Blockly.Python.statementToCode(block, 'NAME1');
   var code = 'while ' + value_name + ':\n';
   if (statements_name1) {
-    code += Blockly.Python.INDENT + statements_name1;
+    code += statements_name1;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
@@ -914,13 +914,13 @@ Blockly.Python['try_except'] = function(block) {
   var statements_name3 = Blockly.Python.statementToCode(block, 'NAME3');
   var code = 'try:\n';
   if (statements_name1) {
-    code += Blockly.Python.INDENT + statements_name1;
+    code += statements_name1;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
   code += 'except Exception as ' + value_name2 + ':\n';
   if (statements_name3) {
-    code += Blockly.Python.INDENT + statements_name3;
+    code += statements_name3;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
@@ -950,13 +950,13 @@ Blockly.Python['try_except_zero'] = function(block) {
   var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
   var code = 'try:\n';
   if (statements_name1) {
-    code += Blockly.Python.INDENT + statements_name1;
+    code += statements_name1;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
   code += 'except:\n';
   if (statements_name2) {
-    code += Blockly.Python.INDENT + statements_name2;
+    code += statements_name2;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
@@ -1281,7 +1281,7 @@ Blockly.Python['for_i_in_'] = function(block) {
   var statements_3 = Blockly.Python.statementToCode(block, '3');
   var code = 'for ' + variable_name2 + ' in ' + value_name1 + ':\n';
   if (statements_3) {
-    code += Blockly.Python.INDENT + statements_3;
+    code += statements_3;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
@@ -1902,7 +1902,7 @@ Blockly.Python['block_def'] = function(block) {
   var statements_name2 = Blockly.Python.statementToCode(block, 'NAME2');
   var code = 'def ' + value_name1 + '():\n'; // 加上括號，即使沒有參數也是合法的函數定義
   if (statements_name2) {
-    code += Blockly.Python.INDENT + statements_name2;
+    code += statements_name2;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
@@ -1955,7 +1955,7 @@ Blockly.Python['any_indent_statement'] = function(block) {
   var statements_name = Blockly.Python.statementToCode(block, 'NAME');
   var code = text_name + '\n';
   if (statements_name) {
-    code += Blockly.Python.INDENT + statements_name;
+    code += statements_name;
   } else if (text_name.endsWith(':')) {
     code += Blockly.Python.INDENT + 'pass\n';
   }
@@ -2012,7 +2012,7 @@ Blockly.Python['for_loop'] = function(block) {
   var statements_name3 = Blockly.Python.statementToCode(block, 'NAME3');
   var code = 'for ' + value_name1 + ' in ' + value_name2 + ':\n';
   if (statements_name3) {
-    code += Blockly.Python.INDENT + statements_name3;
+    code += statements_name3;
   } else {
     code += Blockly.Python.INDENT + 'pass\n';
   }
