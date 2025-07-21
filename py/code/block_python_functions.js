@@ -2887,3 +2887,24 @@ Blockly.Python['minecraft_block'] = function(block) {
   return [code, Blockly.Python.ORDER_ATOMIC];
 };
 
+//<block type="logic_not"></block>
+//======================================
+Blockly.Blocks['logic_not'] = {
+  init: function() {
+    this.appendValueInput("NAME")
+        .setCheck(null)
+        .appendField("not");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(230);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['logic_not'] = function(block) {
+  var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = 'not ' + value_name;
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
