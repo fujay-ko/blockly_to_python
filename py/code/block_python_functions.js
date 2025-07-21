@@ -2908,3 +2908,34 @@ Blockly.Python['logic_not'] = function(block) {
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.Python.ORDER_ATOMIC];
 };
+
+//<block type="list_operations_up"></block>
+//======================================
+Blockly.Blocks['list_operations_up'] = {
+  init: function() {
+    this.appendValueInput("NAME1")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField(".")
+        .appendField(new Blockly.FieldDropdown([["append","append"], ["join","join"], ["count","count"], ["extend","extend"], ["index","index"], ["insert","insert"], ["pop","pop"], ["remove","remove"], ["reverse","reverse"], ["sort","sort"]]), "NAME2")
+        .appendField("(");
+    this.appendValueInput("NAME3")
+        .setCheck(null);
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(python_container_colour);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+Blockly.Python['list_operations_up'] = function(block) {
+  var value_name1 = Blockly.Python.valueToCode(block, 'NAME1', Blockly.Python.ORDER_ATOMIC);
+  var dropdown_name2 = block.getFieldValue('NAME2');
+  var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
+  // TODO: Assemble Python into code variable.
+  var code = value_name1 + "." + dropdown_name2 + "(" + value_name3 + ")";
+  return  code;
+};
