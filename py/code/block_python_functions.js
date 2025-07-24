@@ -2075,7 +2075,7 @@ Blockly.Blocks['list_value'] = {
   init: function() {
     this.appendValueInput("NAME1")
         .setCheck(null)
-        .appendField(new Blockly.FieldDropdown([["len","len"], ["min","min"], ["max","max"], ["sum","sum"], ["sorted","sorted"], ["zip","zip"], ["enumerate","enumerate"], ["iter","iter"], ["next","next"], ["any","any"], ["all","all"], ["filter","filter"], ["slice","slice"]]), "NAME2")
+        .appendField(new Blockly.FieldDropdown([["len","len"], ["min","min"], ["max","max"], ["sum","sum"], ["sorted","sorted"], ["reversed","reversed"], ["zip","zip"], ["enumerate","enumerate"], ["iter","iter"], ["next","next"], ["any","any"], ["all","all"], ["filter","filter"], ["slice","slice"]]), "NAME2")
         .appendField("(");
     this.appendDummyInput()
         .appendField(")");
