@@ -2178,7 +2178,7 @@ Blockly.Python['string_operations'] = function(block) {
   var value_name3 = Blockly.Python.valueToCode(block, 'NAME3', Blockly.Python.ORDER_ATOMIC);
   // TODO: Assemble Python into code variable.
   var code = value_name1 + "." + dropdown_name2 + "(" + value_name3 + ")";
-  return code;
+  return  [code, Blockly.Python.ORDER_ATOMIC];
 };
 
 //<block type="block_print_all"></block>
