@@ -2327,9 +2327,9 @@ Blockly.Blocks['numpy_var_dim3'] = {
 };
 Blockly.Python['numpy_var_dim3'] = function(block) {
   var value_array_name=Blockly.Python.nameDB_.getName(block.getFieldValue('ARRAY_NAME'), Blockly.Names.NameType.VARIABLE);
-  var value_dim3_start = Blockly.Python.valueToCode(block, 'DIM1_START', Blockly.Python.ORDER_ATOMIC);
+  var value_dim3_start = Blockly.Python.valueToCode(block, 'DIM13_START', Blockly.Python.ORDER_ATOMIC);
   var value_dim3_second = Blockly.Python.valueToCode(block, 'DIM3_second', Blockly.Python.ORDER_ATOMIC);
-  var value_dim3_end = Blockly.Python.valueToCode(block, 'DIM1_END', Blockly.Python.ORDER_ATOMIC);
+  var value_dim3_end = Blockly.Python.valueToCode(block, 'DIM3_END', Blockly.Python.ORDER_ATOMIC);
   // TODO: Assemble Python into code variable.
   var code = value_array_name+'['+value_dim3_start+':'+value_dim3_second+':'+value_dim3_end+']';
   return [code, Blockly.Python.ORDER_ATOMIC];
