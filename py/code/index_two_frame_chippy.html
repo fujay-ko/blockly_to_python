@@ -28,7 +28,6 @@
   <script src="block_openai.js"></script>
   <script src="block_string.js"></script>
   <script src="block_comma.js"></script>
-  <title>Scroll Bar Textbox</title>
   
   <!-- CodeMirror 核心樣式 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
@@ -84,7 +83,7 @@
       font-size: 16px;
     }
     /* 收合狀態下，右側的 CodeMirror 隱藏 */
-    .right-section.collapsed.CodeMirror {
+    .right-section.collapsed .CodeMirror {
       display: none;
     }
     
@@ -124,7 +123,6 @@
 			<button id="btn_copy_code" title="複製程式碼">
 				<img src='../../media/copy.png' class="copy icon21">
 				<font style="font-size: 16px;">複製程式碼</font>
-				</img>
 			</button>
 			<button id="trashButton" class="notext" title="...">
 				<img src='../../media/1x1.gif' class="trash icon21">
@@ -224,7 +222,7 @@
   <!-- 右側區塊：包含 CodeMirror 與切換按鈕 -->
   <div class="right-section" id="rightSection">
 	<button class="toggle-button" id="toggleButton">&#9658;</button>
-	<textarea class="CodeMirror" placeholder="程式碼..."></textarea>	    
+	<textarea id="pythonEditor" placeholder="程式碼..."></textarea>	    
   </div>
   
   <!-- 引入 CodeMirror 程式庫 -->
@@ -300,8 +298,12 @@
         return code;
 	}	
 	window.onload = function()
-    { 
-      var editor = CodeMirror.fromTextArea(document.querySelector('.CodeMirror'), {
+    {
+      // 抽出寬度常數，方便統一維護
+      const BLOCKS_WIDTH_NORMAL = "69%";
+      const BLOCKS_WIDTH_EXPANDED = "98%";
+
+      var editor = CodeMirror.fromTextArea(document.getElementById('pythonEditor'), {
         mode: "python",
         theme: "eclipse",
         lineNumbers: true,
@@ -315,25 +317,27 @@
       const rightSection = document.getElementById('rightSection');
       const leftSection = document.getElementById('leftSection');
       const content_blocks = document.getElementById('content_blocks');
-	  //const blocklyCanvas = document.querySelector('.blocklyBlockCanvas');
-      content_blocks.style.width = "69%";
+      content_blocks.style.width = BLOCKS_WIDTH_NORMAL;
       Blockly.svgResize(Blockly.mainWorkspace);
-      if (blocklyWorkspace) {
-        blocklyWorkspace.addEventListener('mousemove', (event) => {
-          //console.log(event);
-		  if (event.button === 0 ) 
-		  {
-			editor.setValue(getCode());
-			editor.refresh();
-          }
-        });
+
+      // 用 debounce 避免 mousemove 高頻觸發 setValue 造成效能問題
+      function debounce(fn, delay) {
+        var timer;
+        return function() { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
+      var updateEditor = debounce(function() {
+        editor.setValue(getCode());
+        editor.refresh();
+      }, 200);
+
+      if (blocklyWorkspace) {
+        blocklyWorkspace.addEventListener('mousemove', updateEditor);
+      }
+
 	  // 增加視窗 resize 事件監聽
 	  window.addEventListener('resize', () => {
-		content_blocks.style.width = "69%";
+		content_blocks.style.width = BLOCKS_WIDTH_NORMAL;
 		Blockly.svgResize(Blockly.mainWorkspace);
-		//視窗大小改變時，檢查右側區塊狀態，若為收合狀態則點一下切換按鈕展開
-		if (rightSection.classList.contains('collapsed')) toggleButton.click();
       });
       // 取得左右主要區塊及切換按鈕
       const toggleButton = document.getElementById('toggleButton');
@@ -343,17 +347,16 @@
         // 根據右側狀態，同步更新左側區塊
         if (rightSection.classList.contains('collapsed')) {
           // 右側收合時，更新按鈕箭頭並讓左側展開
-          content_blocks.style.width = "98%";
+          content_blocks.style.width = BLOCKS_WIDTH_EXPANDED;
           toggleButton.innerHTML = "&#9668;"; 
           leftSection.classList.add('expanded');
         } else {
           // 右側展開時，更新按鈕箭頭並還原左側寬度
           toggleButton.innerHTML = "&#9658;"; 
           leftSection.classList.remove('expanded');
-		  content_blocks.style.width = "69%";
+		  content_blocks.style.width = BLOCKS_WIDTH_NORMAL;
         }
         Blockly.svgResize(Blockly.mainWorkspace);
-		//Blockly.mainWorkspace.render();// 強制 workspace 重新渲染
       });
 	  
       document.addEventListener('keyup', handleKeyup);
@@ -427,7 +430,6 @@
         } 
 		else 
 		{
-          var e_tab_hint1 = document.querySelector("#tab_hint1");
           if(e_tab_hint1) e_tab_hint1.style.visibility = "hidden";
           if(e.pageX > 200){
             if(lastSelected_blocklyTreeRow != null && e.shiftKey) {
