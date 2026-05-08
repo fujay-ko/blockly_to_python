@@ -291,11 +291,13 @@
 	});
     let lastSelected_blocklyTreeRow = null;
     function getCode() {
-		var code = Blockly.Python.workspaceToCode(Blockly.mainWorkspace);
-		var nn = code.indexOf('\n\n');
-		if (nn >= 0 && code.substring(0, nn).indexOf('None') >= 0)
-		  code = code.substring(nn + 3);
-		return code;
+    var code = Blockly.Python.workspaceToCode(Blockly.mainWorkspace);
+        if (code.startsWith('None\n\n')) {
+            code = code.substring(6);
+        } else if (code.startsWith('None\n')) {
+            code = code.substring(5);
+        }
+        return code;
 	}	
 	window.onload = function()
     { 
