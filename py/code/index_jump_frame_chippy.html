@@ -656,9 +656,7 @@
   function getCode() {
       var code = Blockly.Python.workspaceToCode(Blockly.mainWorkspace);
       var nn = code.indexOf('\n\n');
-      if (nn >= 0 && code.substring(0, nn).indexOf('None') >= 0)
-        code = code.substring(nn + 3); // 修正：應該是 nn + 2 或 nn + 1，取決於換行符數量
-      // 更安全的做法是檢查 'None\n' 或 'None\n\n'
+      
       if (code.startsWith('None\n\n')) {
           code = code.substring(6);
       } else if (code.startsWith('None\n')) {
