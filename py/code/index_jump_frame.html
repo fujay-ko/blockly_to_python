@@ -1,53 +1,65 @@
-<!DOCTYPE html> 
-<html>
-<head> 
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="google" value="notranslate">
-	<title>Blockly to code python</title>
-	<link rel="stylesheet" href="style.css">
-	<script src="../../blockly_compressed.js"></script>
-	<script src="../../blocks_compressed.js"></script>
-	<script src="../../javascript_compressed.js"></script>
-	<script src="../../python_compressed.js"></script>
-	<script src="code.js"></script>
-	<script src="block_httpServer.js"></script>
-	<script src="block_opencv.js"></script>
-	<script src="block_numpy.js"></script>
-	<script src="block_python_functions.js"></script>
-	<script src="block_pyautogui.js"></script>
-	<script src="block_google_colab.js"></script>
-	<script src="block_keras.js"></script>
-	<script src="block_Data_HandWrite.js"></script>
-	<script src="block_sklearn.js"></script>
-	<script src="block_mediapipe.js"></script>
-	<script src="block_thread.js"></script>
-	<script src="block_serial.js"></script>
-	<script src="block_pygame.js"></script>
-	<script src="block_openai.js"></script>
-	<script src="block_string.js"></script>
-	<script src="block_comma.js"></script>
-	
-	<!-- CodeMirror 核心樣式 -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
-	<!-- 選擇一個主題 (使用 eclipse 主題) -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/eclipse.min.css">
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" value="notranslate">
+  <title>Blockly to code python</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Blockly 核心：需同步載入，後續腳本依賴 -->
+  <script src="../../blockly_compressed.js"></script>
+  <script src="../../blocks_compressed.js"></script>
+  <script src="../../javascript_compressed.js"></script>
+  <script src="../../python_compressed.js"></script>
+  <!-- code.js 初始化 Blockly workspace，需同步 -->
+  <script src="code.js"></script>
+  <!-- 自定義積木模組加 defer，不阻塞渲染 -->
+  <script src="block_httpServer.js" defer></script>
+  <script src="block_opencv.js" defer></script>
+  <script src="block_numpy.js" defer></script>
+  <script src="block_python_functions.js" defer></script>
+  <script src="block_pyautogui.js" defer></script>
+  <script src="block_google_colab.js" defer></script>
+  <script src="block_keras.js" defer></script>
+  <script src="block_Data_HandWrite.js" defer></script>
+  <script src="block_sklearn.js" defer></script>
+  <script src="block_mediapipe.js" defer></script>
+  <script src="block_thread.js" defer></script>
+  <script src="block_serial.js" defer></script>
+  <script src="block_pygame.js" defer></script>
+  <script src="block_openai.js" defer></script>
+  <script src="block_string.js" defer></script>
+  <script src="block_comma.js" defer></script>
+
+  <!-- CodeMirror 核心樣式 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/eclipse.min.css">
   <style>
     body {
       font-family: 'Microsoft JhengHei', Arial, sans-serif;
       padding: 20px;
     }
-    
-    .button {
-      background-color: #4CAF50;
+
+    /* ===== 統一按鈕樣式（取代分散的 inline style）===== */
+    .btn {
+      font-size: 16px;
       color: white;
-      padding: 10px 20px;
       border: none;
+      padding: 8px 15px;
       border-radius: 4px;
       cursor: pointer;
-      margin: 10px;
+      transition: filter 0.15s;
     }
-    
+    .btn:hover { filter: brightness(0.88); }
+    .btn-save   { background-color: #e24a6b; }
+    .btn-load   { background-color: #4ae270; }
+    .btn-python { background-color: #4a90e2; }
+    .btn-copy   { background-color: #4CAF50; color: white; }
+
+    /* tab 提示文字 */
+    .hint-text { font-size: 13px; }
+
+    /* ===== 彈出視窗 ===== */
     .popup-container {
       display: none;
       position: fixed;
@@ -56,18 +68,14 @@
       width: 600px;
       height: 450px;
       background-color: white;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       border-radius: 5px;
       z-index: 1000;
-      /* 移除原本的 resize: both 和 overflow: auto */
-      /* resize: both;
-      overflow: auto; */
-      min-width: 400px;
-      min-height: 300px;
-      /* 新增：讓縮放手柄能夠顯示在邊界外 */
+      min-width: 300px;
+      min-height: 200px;
       overflow: visible;
     }
-    
+
     .popup-header {
       background-color: #f1f1f1;
       padding: 10px;
@@ -79,191 +87,107 @@
       cursor: move;
       user-select: none;
     }
-    
+
     .popup-title {
       margin: 0;
       font-size: 16px;
     }
-    
+
     .close-button {
       background: none;
       border: none;
       font-size: 20px;
       cursor: pointer;
-      /* 新增：確保關閉按鈕在最上層 */
       z-index: 1001;
+      line-height: 1;
     }
-    
+
     .popup-content {
       height: calc(100% - 42px);
       width: 100%;
       box-sizing: border-box;
       position: relative;
-      /* 新增：防止內容溢出 */
       overflow: hidden;
     }
-    
-    /* ========== 縮放手柄樣式 ========== */
+
+    /* ===== 縮放手柄 ===== */
     .resize-handle {
       position: absolute;
       background-color: transparent;
       z-index: 1000;
     }
-    
-    /* 四個角的縮放手柄 */
-    .resize-handle.nw {
-      top: -5px;
-      left: -5px;
-      width: 10px;
-      height: 10px;
-      cursor: nw-resize;
-    }
-    
-    .resize-handle.ne {
-      top: -5px;
-      right: -5px;
-      width: 10px;
-      height: 10px;
-      cursor: ne-resize;
-    }
-    
-    .resize-handle.sw {
-      bottom: -5px;
-      left: -5px;
-      width: 10px;
-      height: 10px;
-      cursor: sw-resize;
-    }
-    
-    .resize-handle.se {
-      bottom: -5px;
-      right: -5px;
-      width: 10px;
-      height: 10px;
-      cursor: se-resize;
-    }
-    
-    /* 邊緣縮放手柄 */
-    .resize-handle.n {
-      top: -5px;
-      left: 10px;
-      right: 10px;
-      height: 10px;
-      cursor: n-resize;
-    }
-    
-    .resize-handle.s {
-      bottom: -5px;
-      left: 10px;
-      right: 10px;
-      height: 10px;
-      cursor: s-resize;
-    }
-    
-    .resize-handle.w {
-      left: -5px;
-      top: 10px;
-      bottom: 10px;
-      width: 10px;
-      cursor: w-resize;
-    }
-    
-    .resize-handle.e {
-      right: -5px;
-      top: 10px;
-      bottom: 10px;
-      width: 10px;
-      cursor: e-resize;
-    }
-    
-    /* 視覺提示 - 滑鼠懸停時顯示縮放區域 */
-    .resize-handle:hover {
-      background-color: rgba(74, 144, 226, 0.3);
-    }
+    .resize-handle.nw { top:-5px; left:-5px; width:10px; height:10px; cursor:nw-resize; }
+    .resize-handle.ne { top:-5px; right:-5px; width:10px; height:10px; cursor:ne-resize; }
+    .resize-handle.sw { bottom:-5px; left:-5px; width:10px; height:10px; cursor:sw-resize; }
+    .resize-handle.se { bottom:-5px; right:-5px; width:10px; height:10px; cursor:se-resize; }
+    .resize-handle.n  { top:-5px; left:10px; right:10px; height:10px; cursor:n-resize; }
+    .resize-handle.s  { bottom:-5px; left:10px; right:10px; height:10px; cursor:s-resize; }
+    .resize-handle.w  { left:-5px; top:10px; bottom:10px; width:10px; cursor:w-resize; }
+    .resize-handle.e  { right:-5px; top:10px; bottom:10px; width:10px; cursor:e-resize; }
+    .resize-handle:hover { background-color: rgba(74,144,226,0.3); }
 
-
-
-
-    /* CodeMirror 樣式調整 */
+    /* ===== CodeMirror ===== */
     .CodeMirror {
       height: 100%;
       font-size: 14px;
       font-family: monospace;
       border: 1px solid #ddd;
     }
-    
-    /* 行號樣式 */
-    .CodeMirror-linenumber {
-      color: #999;
-      padding-right: 8px;
-    }
-    
-    /* 增加行號區域與程式碼區域之間的間距 */
+    .CodeMirror-linenumber { color: #999; padding-right: 8px; }
     .CodeMirror-gutters {
       border-right: 1px solid #ddd;
       background-color: #f8f8f8;
       padding-right: 8px;
       width: 40px;
     }
-    
-    /* 程式碼區域樣式 */
-    .CodeMirror-lines {
-      padding-left: 8px;
-    }
+    .CodeMirror-lines { padding-left: 8px; }
   </style>
 </head>
 <body>
-	<table width="100%" height="100%">
-		<tr>
-			<td>
-				<div class="toolbar">
-				<input id="input_save" type="button" value="Save" style="font-size:16px; background-color: #e24a6b; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
-				<input id="input_load" type="button" value="Load" style="font-size:16px; background-color: #4ae270; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
-				<input type="button" value="python code" onclick="showPythonCode();" style="font-size:16px; background-color: #4a90e2; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">	
-				<select id="languageMenu"></select>
-			</div>
-				
-			</td>
-			
-		</tr>
-		<tr>
-			<td colspan=2>
-				<table width="100%">
-				<tr id="tabRow" height="1em">
-					<td id="tab_blocks" class="tabon">...</td>
-					<td class="tabmin tab_collapse">&nbsp;</td>
-					<td id="tab_python" class="taboff tab_collapse">Python</td>
-					<td width="50%" id="tab_hint1" class="tab_hint" style="visibility:hidden"></td>
-					<td id="tab_code" class="taboff">
-					<select id="code_menu"></select>
-					
-					</td>
-					<td class="tabmax">
-						           
-            <button id="btn_copy_code" title="複製程式碼">
-              <img src='../../media/copy.png' class="copy icon21">
-              <font style="font-size: 16px;">複製程式碼</font>
-            </button>
-            
-					<button id="trashButton" class="notext" title="...">
-						<img src='../../media/1x1.gif' class="trash icon21">
-					</button>
-					<button id="linkButton" class="notext" title="...">
-						<img src='../../media/1x1.gif' class="link icon21">
-					</button>
-					
-					
-					</td>
-				</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td height="99%" colspan=2 id="content_area">
-			</td>
-		</tr>
-	</table>
-	<button class="button" id="openPopupBtn">打開可移動的彈出視窗</button>
+  <table width="100%" height="100%">
+    <tr>
+      <td>
+        <div class="toolbar">
+          <input id="input_save"  type="button" value="Save"        class="btn btn-save">
+          <input id="input_load"  type="button" value="Load"        class="btn btn-load">
+          <input type="button" value="python code" onclick="showPythonCode();" class="btn btn-python">
+          <select id="languageMenu"></select>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <table width="100%">
+          <tr id="tabRow" height="1em">
+            <td id="tab_blocks" class="tabon">...</td>
+            <td class="tabmin tab_collapse">&nbsp;</td>
+            <td id="tab_python" class="taboff tab_collapse">Python</td>
+            <td width="50%" id="tab_hint1" class="tab_hint" style="visibility:hidden"></td>
+            <td id="tab_code" class="taboff">
+              <select id="code_menu"></select>
+            </td>
+            <td class="tabmax">
+              <button id="btn_copy_code" title="複製程式碼">
+                <img src='../../media/copy.png' class="copy icon21">
+                <span style="font-size:16px;">複製程式碼</span>
+              </button>
+              <button id="trashButton" class="notext" title="...">
+                <img src='../../media/1x1.gif' class="trash icon21">
+              </button>
+              <button id="linkButton" class="notext" title="...">
+                <img src='../../media/1x1.gif' class="link icon21">
+              </button>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td height="99%" colspan="2" id="content_area"></td>
+    </tr>
+  </table>
+
+  <button class="button" id="openPopupBtn">打開可移動的彈出視窗</button>
   
   <div class="popup-container" id="popupWindow">
     <!-- ========== 新增：縮放手柄 HTML ========== -->
@@ -287,280 +211,319 @@
   
   <!-- 引入 CodeMirror 核心程式 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
-  <!-- 引入 Python 語法模式 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
-  <!-- 選擇性：引入 CodeMirror 額外插件，例如自動配對括號 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
-  
+
   <script>
-    // CodeMirror 編輯器實例
-    var editor;
-    
-    // 初始化編輯器
+  // ============================================================
+  //  單一 IIFE 模組 — 所有狀態封裝，不污染全域
+  // ============================================================
+  (function () {
+    'use strict';
+
+    /* ── 狀態 ── */
+    let editor = null;
+    let lastCode = '';             // 避免無變動時重複 setValue
+    let workspaceListener = null;  // Blockly change listener 參考
+    let codeGenMode = null;        // 'python' | 'javascript'
+
+    let isDragging  = false;
+    let isResizing  = false;
+    let resizeDir   = '';
+    let offsetX = 0, offsetY = 0;
+    let startX = 0, startY = 0, startW = 0, startH = 0, startL = 0, startT = 0;
+
+    let lastSelectedRow = null;    // 最後選中的 blocklyTreeRow
+
+    /* ── 資料驅動：Tab 名稱 → YouTube 連結 ── */
+    const TAB_HINTS = {
+      'opencv影像處理'  : 'https://www.youtube.com/watch?v=1ctcuUD7ci8&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=1',
+      'mediapip手部偵測': 'https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=4',
+      '鍵鼠外掛'        : 'https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=5',
+      '語音與文字處理'  : 'https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=6',
+      'youtube工具'     : 'https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=7',
+    };
+
+    /* ── 工具函式 ── */
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    /** 取得 Python 程式碼，清除前導 None */
+    function getCode() {
+      let code = Blockly.Python.workspaceToCode(Blockly.mainWorkspace);
+      if (code.startsWith('None\n\n')) code = code.substring(6);
+      else if (code.startsWith('None\n')) code = code.substring(5);
+      return code;
+    }
+
+    function createAndDownloadFile(filename, data) {
+      const a = document.createElement('a');
+      a.href = window.URL.createObjectURL(data);
+      a.download = filename;
+      a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: false }));
+    }
+
+    /* ── CodeMirror ── */
+
     function initCodeMirror() {
       if (!editor) {
-        editor = CodeMirror.fromTextArea(document.getElementById("pythonEditor"), {
-          mode: "python",           // 設定編輯器的語法模式
-          theme: "eclipse",         // 設定主題
-          lineNumbers: true,        // 顯示行號
-          matchBrackets: true,      // 自動高亮匹配的括號
-          indentUnit: 4,            // 設定縮排寬度
-          tabSize: 4,               // 設定 tab 寬度
-          indentWithTabs: false     // 使用空格縮排
+        editor = CodeMirror.fromTextArea(document.getElementById('pythonEditor'), {
+          mode: 'python',
+          theme: 'eclipse',
+          lineNumbers: true,
+          matchBrackets: true,
+          indentUnit: 4,
+          tabSize: 4,
+          indentWithTabs: false,
         });
       }
     }
-    
-    // 顯示 Python 代碼
-    function showPythonCode() {
-      // 獲取彈出視窗元素
-      const popup = document.getElementById('popupWindow');
-      
-      // 更新標題
-      document.querySelector('.popup-title').textContent = 'Python Code';
-      
-      // 顯示彈出視窗
-      popup.style.display = 'block';
-      
-      // 初始化編輯器
-      initCodeMirror();
-      
-      // 立即更新一次程式碼
-      updatePythonCode();
-      
-      // 設置定時器，每秒更新一次程式碼
-      if (window.pythonCodeInterval) {
-        clearInterval(window.pythonCodeInterval);
-      }
-      if (window.jsCodeInterval) {
-        clearInterval(window.jsCodeInterval);
-      }
-      window.pythonCodeInterval = setInterval(updatePythonCode, 1000);
-    }
-    
-    // 更新 Python 程式碼的函數
-    function updatePythonCode() {
-      try {
-        const code = Blockly.Python.workspaceToCode(Blockly.mainWorkspace);
-        if (editor) {
-          editor.setValue(code);
-        }
-      } catch (e) {
-        console.error('Error updating Python code:', e);
-      }
-    }
-    
-    // 確保 DOM 完全載入後才執行
-    document.addEventListener('DOMContentLoaded', function() {
-      // 獲取元素
-      const popupBtn = document.getElementById('openPopupBtn');
-      const popup = document.getElementById('popupWindow');
-      const closeBtn = document.getElementById('closePopupBtn');
-      const popupHeader = document.getElementById('popupHeader');
-      
-      // 檢查元素是否存在
-      if (!popupBtn || !popup || !closeBtn || !popupHeader) {
-        console.error('Some elements are missing. Please check the HTML structure.');
-        return;
-      }
-      
-      // 打開彈出視窗並顯示程式碼
-      popupBtn.addEventListener('click', function() {
-        // 更新標題
-        document.querySelector('.popup-title').textContent = 'JavaScript 程式碼 (即時更新)';
-        
-        // 顯示彈出視窗
-        popup.style.display = 'block';
-        
-        // 初始化編輯器
-        initCodeMirror();
-        
-        // 立即更新一次程式碼
-        updateJavaScriptCode();
-        
-        // 設置定時器，每秒更新一次程式碼
-        if (window.jsCodeInterval) {
-          clearInterval(window.jsCodeInterval);
-        }
-        if (window.pythonCodeInterval) {
-          clearInterval(window.pythonCodeInterval);
-        }
-        window.jsCodeInterval = setInterval(updateJavaScriptCode, 1000);
-      });
-      
-      // 更新 JavaScript 程式碼的函數
-      function updateJavaScriptCode() {
-        try {
-          const code = Blockly.JavaScript.workspaceToCode(Blockly.mainWorkspace);
-          if (editor) {
-            editor.setValue(code);
-          }
-        } catch (e) {
-          console.error('Error updating JavaScript code:', e);
-        }
-      }
-      
-      // 關閉彈出視窗
-      closeBtn.addEventListener('click', function() {
-        popup.style.display = 'none';
-        
-        // 清除定時器
-        if (window.pythonCodeInterval) {
-          clearInterval(window.pythonCodeInterval);
-        }
-        if (window.jsCodeInterval) {
-          clearInterval(window.jsCodeInterval);
-        }
-      });
-      
-      // 實現拖曳功能
-      let isDragging = false;
-      let offsetX, offsetY;
-      
-      popupHeader.addEventListener('mousedown', function(e) {
-        /* 新增：確保不是點擊關閉按鈕或縮放手柄 */
-        if (e.target === closeBtn || e.target.classList.contains('resize-handle')) return;
-        
-        isDragging = true;
-        offsetX = e.clientX - popup.getBoundingClientRect().left;
-        offsetY = e.clientY - popup.getBoundingClientRect().top;
 
-        /* 新增：防止文字選取 */
+    function syncEditor(code) {
+      if (!editor || code === lastCode) return;
+      lastCode = code;
+      editor.setValue(code);
+    }
+
+    /* ── Blockly change 事件（取代 setInterval）── */
+
+    function onWorkspaceChange() {
+      try {
+        const code = codeGenMode === 'python'
+          ? getCode()
+          : Blockly.JavaScript.workspaceToCode(Blockly.mainWorkspace);
+        syncEditor(code);
+      } catch (e) {
+        console.error('Code generation error:', e);
+      }
+    }
+
+    function attachListener(mode) {
+      codeGenMode = mode;
+      if (workspaceListener) {
+        Blockly.mainWorkspace.removeChangeListener(workspaceListener);
+      }
+      workspaceListener = Blockly.mainWorkspace.addChangeListener(onWorkspaceChange);
+    }
+
+    function detachListener() {
+      if (workspaceListener) {
+        Blockly.mainWorkspace.removeChangeListener(workspaceListener);
+        workspaceListener = null;
+      }
+    }
+
+    /* ── 彈窗開關 ── */
+
+    function openPopup(mode, title) {
+      const popup = document.getElementById('popupWindow');
+      document.querySelector('.popup-title').textContent = title;
+      popup.style.display = 'block';
+      initCodeMirror();
+      attachListener(mode);
+      onWorkspaceChange(); // 立即產出一次
+    }
+
+    // 供 inline onclick 呼叫
+    window.showPythonCode = function () {
+      openPopup('python', 'Python Code');
+    };
+
+    /* ── 拖曳邊界限制 ── */
+
+    function clampPos(popup, x, y) {
+      return {
+        x: clamp(x, 0, window.innerWidth  - popup.offsetWidth),
+        y: clamp(y, 0, window.innerHeight - popup.offsetHeight),
+      };
+    }
+
+    /* ── 重置互動狀態（mouseup / blur 共用）── */
+
+    function resetInteraction() {
+      if (isResizing && editor) editor.refresh(); // 縮放結束後刷新一次
+      isDragging = isResizing = false;
+      resizeDir = '';
+    }
+
+    /* ── loadxml：供外部 Blockly 呼叫 ── */
+
+    window.loadxml = function (xml) {
+      if (typeof xml !== 'string' || xml.length < 5) { alert('No Input'); return false; }
+      try {
+        const dom = Blockly.Xml.textToDom(xml);
+        Blockly.mainWorkspace.clear();
+        Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
+        return true;
+      } catch (e) {
+        alert('Invalid xml');
+        return false;
+      }
+    };
+
+    /* ── 統一初始化 ── */
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const popup          = document.getElementById('popupWindow');
+      const popupHeader    = document.getElementById('popupHeader');
+      const closeBtn       = document.getElementById('closePopupBtn');
+      const openPopupBtn   = document.getElementById('openPopupBtn');
+      const copyBtn        = document.getElementById('btn_copy_code');
+      const resizeHandles  = document.querySelectorAll('.resize-handle');
+      const content_blocks = document.getElementById('content_blocks');
+      const e_tab_hint1    = document.getElementById('tab_hint1');
+      const topElement     = document.querySelector('body > table');
+
+      /* 複製按鈕 */
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          navigator.clipboard.writeText(getCode())
+            .then(() => alert('程式碼已複製到剪貼簿！'))
+            .catch(err => alert('複製程式碼失敗！' + err));
+        });
+      }
+
+      /* Save */
+      document.getElementById('input_save').addEventListener('click', function () {
+        const xmlDom  = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
+        const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+        const fileName = prompt('File Name for XML:', 'myblocks.xml');
+        if (!fileName) return;
+        createAndDownloadFile(fileName, new Blob([xmlText], { type: 'text/xml' }));
+      });
+
+      /* Load */
+      document.getElementById('input_load').addEventListener('click', function () {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = () => {
+          const reader = new FileReader();
+          reader.onload = () => loadxml(reader.result);
+          reader.readAsText(input.files[0]);
+        };
+        input.click();
+      });
+
+      /* 打開彈窗（JavaScript 模式）*/
+      openPopupBtn.addEventListener('click', function () {
+        openPopup('javascript', 'JavaScript 程式碼 (即時更新)');
+      });
+
+      /* 關閉彈窗 */
+      closeBtn.addEventListener('click', function () {
+        popup.style.display = 'none';
+        detachListener();
+      });
+
+      /* 拖曳 */
+      popupHeader.addEventListener('mousedown', function (e) {
+        if (e.target === closeBtn || e.target.classList.contains('resize-handle')) return;
+        isDragging = true;
+        const r = popup.getBoundingClientRect();
+        offsetX = e.clientX - r.left;
+        offsetY = e.clientY - r.top;
         e.preventDefault();
       });
 
-      /* ========== 新增：實現縮放功能 ========== */
-      let isResizing = false;
-      let resizeDirection = '';
-      let startX, startY, startWidth, startHeight, startLeft, startTop;
-      
-      
-    // 確保在 DOM 載入後才獲取元素
-    const resizeHandles = document.querySelectorAll('.resize-handle');
-    
-    // 然後才使用 resizeHandles
-      // 為每個縮放手柄添加事件監聽
+      /* 縮放手柄 */
       resizeHandles.forEach(handle => {
-        handle.addEventListener('mousedown', function(e) {
+        handle.addEventListener('mousedown', function (e) {
           isResizing = true;
-          resizeDirection = handle.dataset.direction;
-          
-          startX = e.clientX;
-          startY = e.clientY;
-          
-          const rect = popup.getBoundingClientRect();
-          startWidth = rect.width;
-          startHeight = rect.height;
-          startLeft = rect.left;
-          startTop = rect.top;
-          
-          // 防止事件冒泡和默認行為
+          resizeDir  = handle.dataset.direction;
+          startX = e.clientX; startY = e.clientY;
+          const r = popup.getBoundingClientRect();
+          startW = r.width; startH = r.height;
+          startL = r.left;  startT = r.top;
           e.preventDefault();
           e.stopPropagation();
-          });
         });
-     
-    
-      
-      /* ========== 縮放功能初始化結束 ========== */
-      
-      document.addEventListener('mousemove', function(e) {
+        handle.addEventListener('click', e => e.stopPropagation());
+      });
+
+      /* mousemove：拖曳 + 縮放 */
+      const MIN_W = 300, MIN_H = 200;
+      document.addEventListener('mousemove', function (e) {
         if (!isDragging && !isResizing) return;
-        
+
         if (isDragging) {
-          /* 原有的拖曳邏輯 */
-          const newX = e.clientX - offsetX;
-          const newY = e.clientY - offsetY;
-          
-          popup.style.left = newX + 'px';
-          popup.style.top = newY + 'px';
+          const { x, y } = clampPos(popup, e.clientX - offsetX, e.clientY - offsetY);
+          popup.style.left = x + 'px';
+          popup.style.top  = y + 'px';
         }
-        
-        /* ========== 新增：縮放邏輯 ========== */
+
         if (isResizing) {
-          const deltaX = e.clientX - startX;
-          const deltaY = e.clientY - startY;
-          
-          let newWidth = startWidth;
-          let newHeight = startHeight;
-          let newLeft = startLeft;
-          let newTop = startTop;
-          
-          // 根據縮放方向調整尺寸和位置
-          switch (resizeDirection) {
-            case 'se': // 右下角
-              newWidth = startWidth + deltaX;
-              newHeight = startHeight + deltaY;
-              break;
-            case 'sw': // 左下角
-              newWidth = startWidth - deltaX;
-              newHeight = startHeight + deltaY;
-              newLeft = startLeft + deltaX;
-              break;
-            case 'ne': // 右上角
-              newWidth = startWidth + deltaX;
-              newHeight = startHeight - deltaY;
-              newTop = startTop + deltaY;
-              break;
-            case 'nw': // 左上角
-              newWidth = startWidth - deltaX;
-              newHeight = startHeight - deltaY;
-              newLeft = startLeft + deltaX;
-              newTop = startTop + deltaY;
-              break;
-            case 'n': // 上邊
-              newHeight = startHeight - deltaY;
-              newTop = startTop + deltaY;
-              break;
-            case 's': // 下邊
-              newHeight = startHeight + deltaY;
-              break;
-            case 'w': // 左邊
-              newWidth = startWidth - deltaX;
-              newLeft = startLeft + deltaX;
-              break;
-            case 'e': // 右邊
-              newWidth = startWidth + deltaX;
-              break;
+          const dX = e.clientX - startX, dY = e.clientY - startY;
+          let nW = startW, nH = startH, nL = startL, nT = startT;
+          switch (resizeDir) {
+            case 'se': nW+=dX; nH+=dY; break;
+            case 'sw': nW-=dX; nH+=dY; nL+=dX; break;
+            case 'ne': nW+=dX; nH-=dY; nT+=dY; break;
+            case 'nw': nW-=dX; nH-=dY; nL+=dX; nT+=dY; break;
+            case 'n':  nH-=dY; nT+=dY; break;
+            case 's':  nH+=dY; break;
+            case 'w':  nW-=dX; nL+=dX; break;
+            case 'e':  nW+=dX; break;
           }
-          
-          // 應用最小尺寸限制
-          const minWidth = 300;
-          const minHeight = 200;
-          
-          if (newWidth >= minWidth) {
-            popup.style.width = newWidth + 'px';
-            popup.style.left = newLeft + 'px';
-          }
-          
-          if (newHeight >= minHeight) {
-            popup.style.height = newHeight + 'px';
-            popup.style.top = newTop + 'px';
-          }
-          
-          // 刷新 CodeMirror 編輯器
-          if (editor) {
-            setTimeout(() => editor.refresh(), 10);
-          }
+          if (nW >= MIN_W) { popup.style.width = nW+'px'; popup.style.left = nL+'px'; }
+          if (nH >= MIN_H) { popup.style.height= nH+'px'; popup.style.top  = nT+'px'; }
+          requestAnimationFrame(() => { if (editor) editor.refresh(); });
         }
-        /* ========== 縮放邏輯結束 ========== */
       });
-      
-      document.addEventListener('mouseup', function() {
-        isDragging = false;
-        /* 新增：重置縮放狀態 */
-        isResizing = false;
-        resizeDirection = '';
-      });
-      
-      /* ========== 新增：防止在縮放手柄上觸發拖曳 ========== */
-      resizeHandles.forEach(handle => {
-        handle.addEventListener('click', function(e) {
-          e.stopPropagation();
+
+      /* mouseup / blur：重置狀態 */
+      document.addEventListener('mouseup', resetInteraction);
+      window.addEventListener('blur', resetInteraction);
+
+      /* Tab 提示（資料驅動）*/
+      const hintBase = '<span class="hint-text">（按住 shift 鍵拖曳可維持選單，按住 ctrl 鍵可拖曳單一方塊）</span>';
+
+      if (content_blocks) {
+        content_blocks.addEventListener('click', function (e) {
+          const row = document.querySelector('.blocklyTreeRow.blocklyTreeSelected');
+          if (row) {
+            const text = row.textContent.trim();
+            let linkHTML = '';
+            for (const [kw, url] of Object.entries(TAB_HINTS)) {
+              if (text.includes(kw)) {
+                linkHTML = `<a href="${url}" target="_blank">${kw}示範&nbsp;</a>`;
+                break;
+              }
+            }
+            e_tab_hint1.innerHTML = linkHTML + hintBase;
+            e_tab_hint1.style.visibility = 'visible';
+          } else {
+            e_tab_hint1.style.visibility = 'hidden';
+          }
+
+          if (e.pageX > 200) {
+            if (lastSelectedRow !== null && e.shiftKey) lastSelectedRow.click();
+          } else {
+            lastSelectedRow = row;
+          }
         });
+      }
+
+      /* 主體點擊（shift 繼續插入）*/
+      if (topElement) {
+        topElement.addEventListener('click', function () {
+          if (lastSelectedRow !== null) {
+            lastSelectedRow.click();
+            lastSelectedRow = null;
+          }
+        });
+      }
+
+      /* 鍵盤 */
+      document.addEventListener('keyup', function (e) {
+        if (e.key === 'Escape') { lastSelectedRow = null; }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          lastSelectedRow = document.querySelector('.blocklyTreeRow.blocklyTreeSelected');
+        }
       });
-      /* ========== 防衝突處理結束 ========== */
-    });
+
+    }); // end DOMContentLoaded
+
+  })();
   </script>
 	<div id="content_blocks" class="content"></div>
 	<pre id="content_javascript" class="content prettyprint lang-js"></pre>
@@ -872,149 +835,5 @@
 	  
   </xml>
   
-<script>
-	
-	function loadxml(xml) {
-		if (typeof xml != "string" || xml.length < 5) {alert("No Input"); return false;}
-		try {
-			var dom = Blockly.Xml.textToDom(xml);
-			Blockly.mainWorkspace.clear();
-			Blockly.Xml.domToWorkspace(Blockly.mainWorkspace,dom);
-			return true;
-		}catch (e) {alert("Invalid xml");return false;}
-	}
-	
-	function createAndDownloadFile(filename, data) {
-		var clickEvent = new MouseEvent('click', {
-		'view': window,'bubbles': true,'cancelable': false
-		});
-		var a = document.createElement('a');
-		a.href = window.URL.createObjectURL(data);
-		a.download = filename;
-		a.textContent = 'Download file!';
-		a.dispatchEvent(clickEvent);
-	};
-	
-	document.getElementById('input_load').addEventListener
-	('click', function(){
-			let input = document.createElement('input');
-			input.type = 'file';
-			input.onchange = _this => {
-				let files = Array.from(input.files);
-				var reader = new FileReader();
-				reader.onload = function() {loadxml(reader.result);}
-				reader.readAsText(files[0]);
-				console.log(files);
-			};
-			input.click();
-		}
-	);
-	// 取得 Python 程式碼 (移除可能的前導 None)
-  function getCode() {
-      var code = Blockly.Python.workspaceToCode(Blockly.mainWorkspace);
-      var nn = code.indexOf('\n\n');
-      if (code.startsWith('None\n\n')) {
-          code = code.substring(6);
-      } else if (code.startsWith('None\n')) {
-          code = code.substring(5);
-      }
-      return code;
-  }
-  
-  // 確保 DOM 完全載入後才執行（複製按鈕事件）
-  document.addEventListener('DOMContentLoaded', function() {
-      // 加入複製按鈕的事件監聽
-      const copyBtn = document.getElementById('btn_copy_code');
-      if (copyBtn) {
-          copyBtn.addEventListener('click', function() {
-            window.navigator.clipboard.writeText(getCode())
-            .then(() => {	alert('程式碼已複製到剪貼簿！');})
-            .catch(err => { alert('複製程式碼失敗！', err);});
-          });
-      } else {
-          console.error('Copy button element not found.');
-      }
-  
-  });
-  
-	document.getElementById('input_save').addEventListener
-	('click', function() {
-	var xmlDom = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
-		var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
-		var fileName = prompt('File Name for XML:', 'myblocks.xml');
-		if (!fileName) return;	
-		var data = new Blob([xmlText], {type: 'text/xml'});
-		createAndDownloadFile(fileName, data);
-	}
-	);
-	
-	// openPopupBtn 的事件由 DOMContentLoaded 內的監聽處理
-	
-	lastSelected_blocklyTreeRow = null;
-
-	window.onload=function(){	
-		//$(document).on("keyup", function (e) {var code = e.keyCode || e.which; alert('key pressed: ' + code);});
-		document.addEventListener('keyup', handleKeyup);
-		function handleKeyup(e){
-			if(e.keyCode==27){lastSelected_blocklyTreeRow = null;}//esc
-			if(e.keyCode==38||e.keyCode==40)//按下鍵or上鍵
-			{
-				blocklyTreeRow = document.querySelector(".blocklyTreeRow.blocklyTreeSelected");
-				lastSelected_blocklyTreeRow = blocklyTreeRow;
-			}
-		}
-		
-		content_blocks= document.querySelector("#content_blocks");
-		topElement=document.querySelector("body > table");
-		topElement.addEventListener('click', handleTopClick);
-		content_blocks.addEventListener('click', handleClick);
-		function handleTopClick(e) {
-			if(lastSelected_blocklyTreeRow!=null)
-			{
-				lastSelected_blocklyTreeRow.click();
-				lastSelected_blocklyTreeRow = null;
-			}
-		}
-		function handleClick(e) {
-			blocklyTreeRow = document.querySelector(".blocklyTreeRow.blocklyTreeSelected");
-			e_tab_hint1=document.querySelector("#tab_hint1")
-			if(blocklyTreeRow!=null) 
-			{
-				hintHTML = "<font size=3>(按住shift鍵拖曳可維持選單,按住ctrl鍵可拖曳單一方塊)</font>";
-				e_tab_hint1.innerHTML = hintHTML;
-				tabText="opencv影像處理";
-				ytLink = "https://www.youtube.com/watch?v=1ctcuUD7ci8&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=1";
-				if(blocklyTreeRow.textContent.includes(tabText)){linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';e_tab_hint1.innerHTML = linkHTML+hintHTML;}
-				tabText="mediapip手部偵測";
-				ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=4";
-				if(blocklyTreeRow.textContent.includes(tabText)){linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';e_tab_hint1.innerHTML = linkHTML+hintHTML;}
-				tabText="鍵鼠外掛";
-				ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=5";
-				if(blocklyTreeRow.textContent.includes(tabText)){linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';e_tab_hint1.innerHTML = linkHTML+hintHTML;}
-				tabText="語音與文字處理";
-				ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=6";
-				if(blocklyTreeRow.textContent.includes(tabText)){linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';e_tab_hint1.innerHTML = linkHTML+hintHTML;}
-				tabText="youtube工具";
-				ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=7";
-				if(blocklyTreeRow.textContent.includes(tabText)){linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';e_tab_hint1.innerHTML = linkHTML+hintHTML;}
-				e_tab_hint1.style.visibility ="visible";
-			}
-			else e_tab_hint1.style.visibility ="hidden";
-			if(e.pageX>200)
-			{
-				if(lastSelected_blocklyTreeRow!=null)
-					if (e.shiftKey) 
-						lastSelected_blocklyTreeRow.click();
-			}
-			else 
-			{
-				console.log("select treeRow");
-				//if(blocklyTreeRow != null) 
-				lastSelected_blocklyTreeRow = blocklyTreeRow;
-			}	
-		}
-	}
-	//boxEle.addEventListener('click', handleClick);
-</script>
 </body>
 </html>

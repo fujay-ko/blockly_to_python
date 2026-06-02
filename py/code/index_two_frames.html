@@ -105,6 +105,11 @@
       justify-content: center;
       z-index: 10;
     }
+
+    /* 取代 <font> 標籤 */
+    .btn-label {
+      font-size: 16px;
+    }
   </style>
 </head> 
 
@@ -122,7 +127,7 @@
 		<td class="farSide">
 			<button id="btn_copy_code" title="複製程式碼">
 				<img src='../../media/copy.png' class="copy icon21">
-				<font style="font-size: 16px;">複製程式碼</font>
+				<span class="btn-label">複製程式碼</span>
 			</button>
 			<button id="trashButton" class="notext" title="...">
 				<img src='../../media/1x1.gif' class="trash icon21">
@@ -476,14 +481,41 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
   
   <script>
-    // 以下為原本其他功能程式碼 (例如 Blockly 與 CodeMirror 初始化)
+    // ── 常數（魔法數字集中管理） ──────────────────────────────
+    const BLOCKS_WIDTH_NORMAL        = "69%";
+    const BLOCKS_WIDTH_EXPANDED      = "98%";
+    const TOOLBAR_CLICK_X_THRESHOLD  = 200; // 工具列寬度約 200px
+
+    // ── editor 提升至模組作用域 ───────────────────────────────
+    let editor = null;
+
+    // ── debounce 工具函式 ────────────────────────────────────
+    function debounce(fn, delay) {
+      let timer;
+      return function() { clearTimeout(timer); timer = setTimeout(fn, delay); };
+    }
+
+    // ── 取得 Blockly 產生的 Python 程式碼 ────────────────────
+    // Note: 'None\n' 前綴是 Blockly Python 產生器在 workspace 有
+    //       純值型頂層積木時的已知行為，此處做後處理移除。
+    function getCode() {
+      let code = Blockly.Python.workspaceToCode(Blockly.mainWorkspace);
+      if (code.startsWith('None\n\n')) {
+        code = code.substring(6);
+      } else if (code.startsWith('None\n')) {
+        code = code.substring(5);
+      }
+      return code;
+    }
+
+    // ── Save / Load ──────────────────────────────────────────
     function loadxml(xml) {
-      if (typeof xml != "string" || xml.length < 5) {
+      if (typeof xml !== "string" || xml.length < 5) {
         alert("No Input");
         return false;
       }
       try {
-        var dom = Blockly.Xml.textToDom(xml);
+        const dom = Blockly.Xml.textToDom(xml);
         Blockly.mainWorkspace.clear();
         Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
         return true;
@@ -492,63 +524,52 @@
         return false;
       }
     }
-    
+
     function createAndDownloadFile(filename, data) {
-      var clickEvent = new MouseEvent('click', {
-        'view': window,
-        'bubbles': true,
-        'cancelable': false
+      const clickEvent = new MouseEvent('click', {
+        view: window, bubbles: true, cancelable: false
       });
-      var a = document.createElement('a');
+      const a = document.createElement('a');
       a.href = window.URL.createObjectURL(data);
       a.download = filename;
       a.textContent = 'Download file!';
       a.dispatchEvent(clickEvent);
     }
-    
-    document.getElementById('input_load').addEventListener('click', function(){
-      let input = document.createElement('input');
+
+    document.getElementById('input_load').addEventListener('click', function() {
+      const input = document.createElement('input');
       input.type = 'file';
-      input.onchange = _this => {
-        let files = Array.from(input.files);
-        var reader = new FileReader();
-        reader.onload = function() { loadxml(reader.result); }
+      input.onchange = () => {
+        const files = Array.from(input.files);
+        const reader = new FileReader();
+        reader.onload = function() { loadxml(reader.result); };
         reader.readAsText(files[0]);
       };
       input.click();
     });
-    
+
     document.getElementById('input_save').addEventListener('click', function() {
-      var xmlDom = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
-      var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
-      var fileName = prompt('File Name for XML:', 'myblocks.xml');
+      const xmlDom  = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
+      const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+      const fileName = prompt('File Name for XML:', 'myblocks.xml');
       if (!fileName) return;
-      var data = new Blob([xmlText], {type: 'text/xml'});
+      const data = new Blob([xmlText], { type: 'text/xml' });
       createAndDownloadFile(fileName, data);
     });
-    
-	document.getElementById('btn_copy_code').addEventListener('click', function() {
-	  window.navigator.clipboard.writeText(getCode())
-	  .then(() => {	alert('程式碼已複製到剪貼簿！');}).catch(err => {	
-		alert('複製程式碼失敗！', err);});
-	});
-    let lastSelected_blocklyTreeRow = null;
-    function getCode() {
-    var code = Blockly.Python.workspaceToCode(Blockly.mainWorkspace);
-    if (code.startsWith('None\n\n')) {
-        code = code.substring(6);
-    } else if (code.startsWith('None\n')) {
-        code = code.substring(5);
-    }
-    return code;
-}	
-	window.onload = function()
-    {
-      // 抽出寬度常數，方便統一維護
-      const BLOCKS_WIDTH_NORMAL = "69%";
-      const BLOCKS_WIDTH_EXPANDED = "98%";
 
-      var editor = CodeMirror.fromTextArea(document.getElementById('pythonEditor'), {
+    document.getElementById('btn_copy_code').addEventListener('click', function() {
+      window.navigator.clipboard.writeText(getCode())
+        .then(() => { alert('程式碼已複製到剪貼簿！'); })
+        .catch(err => { alert('複製程式碼失敗！' + err); });
+    });
+
+    // ── 主初始化 ────────────────────────────────────────────
+    let lastSelected_blocklyTreeRow = null;
+
+    window.onload = function() {
+
+      // 初始化 CodeMirror（賦值給模組作用域的 editor）
+      editor = CodeMirror.fromTextArea(document.getElementById('pythonEditor'), {
         mode: "python",
         theme: "eclipse",
         lineNumbers: true,
@@ -558,133 +579,109 @@
         indentWithTabs: false
       });
 
-      const blocklyWorkspace = document.querySelector('.blocklyWorkspace');
-      const rightSection = document.getElementById('rightSection');
-      const leftSection = document.getElementById('leftSection');
+      const rightSection   = document.getElementById('rightSection');
+      const leftSection    = document.getElementById('leftSection');
       const content_blocks = document.getElementById('content_blocks');
       content_blocks.style.width = BLOCKS_WIDTH_NORMAL;
       Blockly.svgResize(Blockly.mainWorkspace);
 
-      // 用 debounce 避免 mousemove 高頻觸發 setValue 造成效能問題
-      function debounce(fn, delay) {
-        var timer;
-        return function() { clearTimeout(timer); timer = setTimeout(fn, delay); };
-      }
-      var updateEditor = debounce(function() {
-        editor.setValue(getCode());
-        editor.refresh();
+      // ── 優化①：Blockly 事件監聽，取代 mousemove ─────────
+      // 只在積木真正改變時才更新編輯器，大幅降低不必要的呼叫。
+      const updateEditor = debounce(function() {
+        if (editor) {
+          editor.setValue(getCode());
+          editor.refresh();
+        }
       }, 200);
 
-      if (blocklyWorkspace) {
-        blocklyWorkspace.addEventListener('mousemove', updateEditor);
-      }
-
-	  // 增加視窗 resize 事件監聽
-	  window.addEventListener('resize', () => {
-		content_blocks.style.width = BLOCKS_WIDTH_NORMAL;
-		Blockly.svgResize(Blockly.mainWorkspace);
+      Blockly.mainWorkspace.addChangeListener(function(event) {
+        if (!Blockly.Events.isTransient(event)) {
+          updateEditor();
+        }
       });
-      // 取得左右主要區塊及切換按鈕
+
+      // ── resize ───────────────────────────────────────────
+      window.addEventListener('resize', () => {
+        content_blocks.style.width = BLOCKS_WIDTH_NORMAL;
+        Blockly.svgResize(Blockly.mainWorkspace);
+      });
+
+      // ── toggle 收合 ───────────────────────────────────────
       const toggleButton = document.getElementById('toggleButton');
       toggleButton.addEventListener('click', () => {
-        // 切換右側區塊狀態
         rightSection.classList.toggle('collapsed');
-        // 根據右側狀態，同步更新左側區塊
         if (rightSection.classList.contains('collapsed')) {
-          // 右側收合時，更新按鈕箭頭並讓左側展開
           content_blocks.style.width = BLOCKS_WIDTH_EXPANDED;
-          toggleButton.innerHTML = "&#9668;"; 
+          toggleButton.innerHTML = "&#9668;";
           leftSection.classList.add('expanded');
         } else {
-          // 右側展開時，更新按鈕箭頭並還原左側寬度
-          toggleButton.innerHTML = "&#9658;"; 
+          toggleButton.innerHTML = "&#9658;";
           leftSection.classList.remove('expanded');
-		  content_blocks.style.width = BLOCKS_WIDTH_NORMAL;
+          content_blocks.style.width = BLOCKS_WIDTH_NORMAL;
         }
         Blockly.svgResize(Blockly.mainWorkspace);
-		//Blockly.mainWorkspace.render();// 強制 workspace 重新渲染
       });
-	  
-      document.addEventListener('keyup', handleKeyup);
-      function handleKeyup(e){
-        if(e.keyCode === 27){
-          lastSelected_blocklyTreeRow = null;
-        }
-        if(e.keyCode === 38 || e.keyCode === 40) {
-          var blocklyTreeRow = document.querySelector(".blocklyTreeRow.blocklyTreeSelected");
-          lastSelected_blocklyTreeRow = blocklyTreeRow;
-        }
-      }
-      
-      var topElement = document.querySelector("body > .left-section");
-      if(topElement) topElement.addEventListener('click', handleTopClick);
-	  else console.log("topElement not found");
-      
-      if(content_blocks) content_blocks.addEventListener('click', handleClick);
-      
-      function handleTopClick(e) {
-		//navigator.clipboard.writeText(getCode())
-        if(lastSelected_blocklyTreeRow != null) {
-          lastSelected_blocklyTreeRow.click();
-          lastSelected_blocklyTreeRow = null;
-        }
-      }
-    /* 
-	if (blocklyCanvas) {
-		blocklyCanvas.addEventListener('click', (event) => {
-			if (event.button === 0) console.log("blocklyCanvas click");
-		});
-	}*/
 
-      function handleClick(e) {
-        var blocklyTreeRow = document.querySelector(".blocklyTreeRow.blocklyTreeSelected");
-        var e_tab_hint1 = document.querySelector("#tab_hint1");
-        if(blocklyTreeRow != null) {
-          var hintHTML = "<font size=3>(按住shift鍵拖曳可維持選單,按住ctrl鍵可拖曳單一方塊)</font>";
-          e_tab_hint1.innerHTML = hintHTML;
-          let tabText = "opencv影像處理";
-          let ytLink = "https://www.youtube.com/watch?v=1ctcuUD7ci8&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=1";
-          if(blocklyTreeRow.textContent.includes(tabText)){
-            let linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';
-            e_tab_hint1.innerHTML = linkHTML + hintHTML;
-          }
-          tabText = "mediapip手部偵測";
-          ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=4";
-          if(blocklyTreeRow.textContent.includes(tabText)){
-            let linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';
-            e_tab_hint1.innerHTML = linkHTML + hintHTML;
-          }
-          tabText = "鍵鼠外掛";
-          ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=5";
-          if(blocklyTreeRow.textContent.includes(tabText)){
-            let linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';
-            e_tab_hint1.innerHTML = linkHTML + hintHTML;
-          }
-          tabText = "語音與文字處理";
-          ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=6";
-          if(blocklyTreeRow.textContent.includes(tabText)){
-            let linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';
-            e_tab_hint1.innerHTML = linkHTML + hintHTML;
-          }
-          tabText = "youtube工具";
-          ytLink = "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=7";
-          if(blocklyTreeRow.textContent.includes(tabText)){
-            let linkHTML = '<a href="'+ytLink+'">'+tabText+'示範&nbsp</a>';
-            e_tab_hint1.innerHTML = linkHTML + hintHTML;
-          }
-          e_tab_hint1.style.visibility = "visible";
-        } 
-		else 
-		{
-          if(e_tab_hint1) e_tab_hint1.style.visibility = "hidden";
-          if(e.pageX > 200){
-            if(lastSelected_blocklyTreeRow != null && e.shiftKey) {
-              lastSelected_blocklyTreeRow.click();
-            }
-          } else {
-            lastSelected_blocklyTreeRow = blocklyTreeRow;
-          }
+      // ── keyup（優化：e.keyCode → e.key） ─────────────────
+      document.addEventListener('keyup', function(e) {
+        if (e.key === 'Escape') {
+          lastSelected_blocklyTreeRow = null;
         }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          lastSelected_blocklyTreeRow =
+            document.querySelector(".blocklyTreeRow.blocklyTreeSelected");
+        }
+      });
+
+      // ── 左側點擊（維持選單） ──────────────────────────────
+      const topElement = document.querySelector("body > .left-section");
+      if (topElement) {
+        topElement.addEventListener('click', function() {
+          if (lastSelected_blocklyTreeRow !== null) {
+            lastSelected_blocklyTreeRow.click();
+            lastSelected_blocklyTreeRow = null;
+          }
+        });
+      } else {
+        console.warn("left-section not found");
+      }
+
+      // ── content_blocks 點擊（優化②：資料驅動取代重複 if） ─
+      // 新增 YouTube 分類只需在 HINT_LINKS 陣列加一筆。
+      const HINT_LINKS = [
+        { tab: "opencv影像處理",   url: "https://www.youtube.com/watch?v=1ctcuUD7ci8&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=1" },
+        { tab: "mediapip手部偵測", url: "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=4" },
+        { tab: "鍵鼠外掛",         url: "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=5" },
+        { tab: "語音與文字處理",   url: "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=6" },
+        { tab: "youtube工具",      url: "https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=7" },
+      ];
+      const HINT_BASE_HTML =
+        '<span class="btn-label">(按住shift鍵拖曳可維持選單,按住ctrl鍵可拖曳單一方塊)</span>';
+
+      if (content_blocks) {
+        content_blocks.addEventListener('click', function(e) {
+          const blocklyTreeRow = document.querySelector(".blocklyTreeRow.blocklyTreeSelected");
+          const e_tab_hint1    = document.getElementById("tab_hint1");
+
+          if (blocklyTreeRow !== null) {
+            const matched = HINT_LINKS.find(
+              item => blocklyTreeRow.textContent.includes(item.tab)
+            );
+            e_tab_hint1.innerHTML = matched
+              ? `<a href="${matched.url}">${matched.tab}示範&nbsp;</a>` + HINT_BASE_HTML
+              : HINT_BASE_HTML;
+            e_tab_hint1.style.visibility = "visible";
+          } else {
+            if (e_tab_hint1) e_tab_hint1.style.visibility = "hidden";
+            if (e.pageX > TOOLBAR_CLICK_X_THRESHOLD) {
+              if (lastSelected_blocklyTreeRow !== null && e.shiftKey) {
+                lastSelected_blocklyTreeRow.click();
+              }
+            } else {
+              lastSelected_blocklyTreeRow = blocklyTreeRow;
+            }
+          }
+        });
       }
     };
   </script>
