@@ -1,0 +1,74 @@
+/* 將 body 設為橫向 Flex 版面 */
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* 左側區塊：預設寬度 70%，含原有 table 內容與 content_blocks */
+.left-section {
+  flex-basis: 70%;
+  transition: flex-basis 0.3s ease;
+  background-color: #f0f0f0;
+  padding: 20px;
+  box-sizing: border-box;
+}
+/* 當右側收合時，左側展開為全部空間扣除右側按鈕寬度 */
+.left-section.expanded {
+  flex-basis: calc(100% - 40px);
+}
+
+/* 右側區塊：預設寬度 30% */
+.right-section {
+  flex-basis: 30%;
+  transition: flex-basis 0.3s ease;
+  background-color: #e0e0e0;
+  padding: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+/* 右側區塊收合後僅留 40px 寬以顯示切換按鈕 */
+.right-section.collapsed {
+  flex-basis: 40px;
+}
+
+/* CodeMirror 文字編輯器 */
+.CodeMirror {
+  flex: 1;
+  width: 100%;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+/* 收合狀態下，右側的 CodeMirror 隱藏 */
+.right-section.collapsed .CodeMirror {
+  display: none;
+}
+
+/* 切換按鈕：以箭頭圖示呈現，固定在右側區塊左邊緣 */
+.toggle-button {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+  padding: 5px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* 取代 <font> 標籤 */
+.btn-label {
+  font-size: 16px;
+}
