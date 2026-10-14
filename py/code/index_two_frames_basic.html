@@ -89,9 +89,16 @@
     <div id="content_blocks" class="content"></div>
     <pre id="content_python" class="content prettyprint lang-py"></pre>
     <textarea id="content_xml" class="content" wrap="off"></textarea>
-      <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
-
-    <category name="{catLogic}" colour="210">
+	  
+    <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
+		  
+	    <category name="特殊" colour="230">
+	      <block type="dedicated_input"></block>
+	      <block type="dedicated_input_data_block_type"></block>
+	      <block type="text_print"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>
+		</category>
+			  
+    	<category name="{catLogic}" colour="210">
 			<block type="controls_if"></block>
 			<block type="logic_compare"></block>
 			<block type="logic_operation"></block>
