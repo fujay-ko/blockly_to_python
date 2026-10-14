@@ -2939,3 +2939,40 @@ Blockly.Python['list_operations_up'] = function(block) {
   var code = value_name1 + "." + dropdown_name2 + "(" + value_name3 + ")";
   return  code;
 };
+
+Blockly.Python['dedicated_input'] = function(block) {
+  // 輔助函式：整數 -> 浮點數 -> 原本的文字
+  Blockly.Python.provideFunction_('variable_input', [
+    'def ' + Blockly.Python.FUNCTION_NAME_PLACEHOLDER_ + '(msg):',
+    '  text = input(msg)',
+    '  try:',
+    '    return int(text)',
+    '  except ValueError:',
+    '    try:',
+    '      return float(text)',
+    '    except ValueError:',
+    '      return text'
+  ]);
+  Blockly.Python.definitions_['input_data_init'] = "input_data = ''";
+  var msg = Blockly.Python.valueToCode(block, 'MSG', Blockly.Python.ORDER_NONE) || "''";
+  return 'input_data = variable_input(' + msg + ')\n';
+};
+
+//<block type="dedicated_input_data_block_type"></block>
+//======================================
+Blockly.Blocks['dedicated_input_data_block_type'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("詢問的答案");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(230);
+    this.setTooltip("取得最近一次詢問的答案");
+    this.setHelpUrl("");
+  }
+};
+
+Blockly.Python['dedicated_input_data_block_type'] = function(block) {
+  Blockly.Python.definitions_['input_data_init'] = "input_data = ''";
+  return ['input_data', Blockly.Python.ORDER_ATOMIC];
+};
