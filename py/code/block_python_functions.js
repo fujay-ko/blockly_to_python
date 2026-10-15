@@ -2939,6 +2939,23 @@ Blockly.Python['list_operations_up'] = function(block) {
   var code = value_name1 + "." + dropdown_name2 + "(" + value_name3 + ")";
   return  code;
 };
+//<block type="dedicated_input"></block>
+//======================================
+Blockly.Blocks['dedicated_input'] = {
+  init: function() {
+    this.appendValueInput("MSG")
+        .setCheck(null)
+        .appendField("詢問");
+    this.appendDummyInput()
+        .appendField("並等待");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(230);
+    this.setTooltip("詢問使用者並把答案存起來，數字會自動轉成整數或小數");
+    this.setHelpUrl("");
+  }
+};
 
 Blockly.Python['dedicated_input'] = function(block) {
   // 輔助函式：整數 -> 浮點數 -> 原本的文字
