@@ -2951,7 +2951,7 @@ Blockly.Blocks['dedicated_input'] = {
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(230);
+    this.setColour(180);
     this.setTooltip("詢問使用者並把答案存起來，數字會自動轉成整數或小數");
     this.setHelpUrl("");
   }
@@ -2983,7 +2983,7 @@ Blockly.Blocks['dedicated_input_data_block_type'] = {
         .appendField("詢問的答案");
     this.setInputsInline(true);
     this.setOutput(true, null);
-    this.setColour(230);
+    this.setColour(180);
     this.setTooltip("取得最近一次詢問的答案");
     this.setHelpUrl("");
   }
