@@ -11,7 +11,7 @@
   <script src="../../blocks_compressed.js"></script>
   <script src="../../javascript_compressed.js"></script>
   <script src="../../python_compressed.js"></script>
-  <script src="code.js?v=3"></script>
+  <script src="code.js?v=6"></script>
   
   <script src="block_httpServer.js"></script>  
   <script src="block_opencv.js"></script>  
@@ -31,16 +31,15 @@
   <script src="block_comma.js"></script>
   
   <!-- CodeMirror 核心樣式 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+  <link rel="stylesheet" href="vendor/codemirror/codemirror.min.css">
   <!-- 主題 (此處採用 eclipse 主題) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/eclipse.min.css">
+  <link rel="stylesheet" href="vendor/codemirror/theme/eclipse.min.css">
 
 </head> 
 
 <body>
   <!-- 左側區塊，原有內容包含 table、content_blocks 等 -->
   <div class="left-section" id="leftSection">
-	<!--<span id="title" style="display:none"></span>-->
     <table width="100%" height="100%">
       <tr>
         <td>
@@ -56,18 +55,6 @@
 				<img src='../../media/1x1.gif' class="trash icon21">
 			</button>
 		</td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <table width="100%">
-            <tr id="tabRow" height="26px">
-              <td id="tab_blocks" class="tabon">...</td>
-              <td class="tabmin tab_collapse">&nbsp;</td>
-              <td class="tabmax">
-              </td>
-            </tr>
-          </table>
-        </td>
       </tr>
       <tr>
         <td height="99%" colspan="2" id="content_area">
@@ -395,9 +382,9 @@
   </div>
   
   <!-- 引入 CodeMirror 程式庫 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+  <script src="vendor/codemirror/codemirror.min.js"></script>
+  <script src="vendor/codemirror/mode/python/python.min.js"></script>
+  <script src="vendor/codemirror/addon/edit/matchbrackets.min.js"></script>
 
   <script src="two-frames.js"></script>
   

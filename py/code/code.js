@@ -156,15 +156,6 @@ Code.bindClick = function(el, func) {
 };
 
 /**
- * Load the Prettify CSS and JavaScript.
- */
-Code.importPrettify = function() {
-  var script = document.createElement('script');
-  script.setAttribute('src', 'https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js');
-  document.head.appendChild(script);
-};
-
-/**
  * Compute the absolute coordinates and dimensions of an HTML element.
  * @param {!Element} element Element to match.
  * @return {!Object} Contains height, width, x, and y properties.
@@ -198,14 +189,13 @@ Code.LANG = Code.getLang();
  * List of tab names.
  * @private
  */
-Code.TABS_ = ['blocks','python'];
+Code.TABS_ = ['blocks'];
 
 /**
  * List of tab names with casing, for display in the UI.
  * @private
  */
-Code.TABS_DISPLAY_ = ['Blocks', 'Python',];
-//Code.TABS_DISPLAY_ = ['Blocks'];
+Code.TABS_DISPLAY_ = ['Blocks'];
 Code.selected = 'blocks';
 
 /**
@@ -416,10 +406,6 @@ Code.init = function() {
             wheel: true}
       });
 
-  // Add to reserved word list: Local variables in execution environment (runJS)
-  // and the infinite loop detection function.
-  Blockly.JavaScript.addReservedWords('code,timeouts,checkTimeout');
-
   Code.loadBlocks('');
 
   if ('BlocklyStorage' in window) {
@@ -431,7 +417,6 @@ Code.init = function() {
 
   Code.bindClick('trashButton',
       function() {Code.discard(); Code.renderContent();});
-  // Code.bindClick('runButton', Code.runJS);
   // Disable the link button if page isn't backed by App Engine storage.
   var linkButton = document.getElementById('linkButton');
   if (linkButton) {
@@ -464,9 +449,6 @@ Code.init = function() {
 
   onresize();
   Blockly.svgResize(Code.workspace);
-
-  // Lazy-load the syntax-highlighting.
-  window.setTimeout(Code.importPrettify, 1);
 };
 
 /**
@@ -518,54 +500,13 @@ Code.initLanguage = function() {
   // Inject language strings.
   document.title += ' ' + MSG['title'];
   //document.getElementById('title').textContent = MSG['title'];
-  document.getElementById('tab_blocks').textContent = MSG['blocks'];
+  var tabBlocksEl = document.getElementById('tab_blocks');
+  if (tabBlocksEl) tabBlocksEl.textContent = MSG['blocks'];
 
   if (document.getElementById('linkButton')) {
     document.getElementById('linkButton').title = MSG['linkTooltip'];
   }
-  //document.getElementById('runButton').title = MSG['runTooltip'];
   document.getElementById('trashButton').title = MSG['trashTooltip'];
-};
-
-/**
- * Execute the user's code.
- * Just a quick and dirty eval.  Catch infinite loops.
- * @param {Event} event Event created from listener bound to the function.
- */
-Code.runJS = function(event) {
-  // Prevent code from being executed twice on touchscreens.
-  if (event.type === 'touchend') {
-    event.preventDefault();
-  }
-
-  Blockly.JavaScript.INFINITE_LOOP_TRAP = 'checkTimeout();\n';
-  var timeouts = 0;
-  var checkTimeout = function() {
-    if (timeouts++ > 1000000) {
-      throw MSG['timeout'];
-    }
-  };
-  var code = Blockly.JavaScript.workspaceToCode(Code.workspace);
-  Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
-  try {
-    eval(code);
-  } catch (e) {
-    alert(MSG['badCode'].replace('%1', e));
-  }
-};
-
-/**
- * Discard all blocks from the workspace.
- */
-Code.discard = function() {
-  var count = Code.workspace.getAllBlocks(false).length;
-  if (count < 2 ||
-      window.confirm(Blockly.Msg['DELETE_ALL_BLOCKS'].replace('%1', count))) {
-    Code.workspace.clear();
-    if (window.location.hash) {
-      window.location.hash = '';
-    }
-  }
 };
 
 // Load the Code demo's language strings.

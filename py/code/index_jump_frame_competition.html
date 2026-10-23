@@ -9,10 +9,9 @@
   <!-- Blockly 核心：需同步載入，後續腳本依賴 -->
   <script src="../../blockly_compressed.js"></script>
   <script src="../../blocks_compressed.js"></script>
-  <script src="../../javascript_compressed.js"></script>
   <script src="../../python_compressed.js"></script>
   <!-- code.js 初始化 Blockly workspace，需同步 -->
-  <script src="code.js?v=3"></script>
+  <script src="code.js?v=6"></script>
   <!-- 自定義積木模組加 defer，不阻塞渲染 -->
   <script src="block_httpServer.js" defer></script>
   <script src="block_opencv.js" defer></script>
@@ -32,8 +31,8 @@
   <script src="block_comma.js" defer></script>
 
   <!-- CodeMirror 核心樣式 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/eclipse.min.css">
+  <link rel="stylesheet" href="vendor/codemirror/codemirror.min.css">
+  <link rel="stylesheet" href="vendor/codemirror/theme/eclipse.min.css">
   <style>
     body {
       font-family: 'Microsoft JhengHei', Arial, sans-serif;
@@ -178,7 +177,6 @@
     </tr>
   </table>
 
-  <button class="button" id="openPopupBtn">打開可移動的彈出視窗</button>
   
   <div class="popup-container" id="popupWindow">
     <!-- ========== 新增：縮放手柄 HTML ========== -->
@@ -201,9 +199,9 @@
   </div>
   
   <!-- 引入 CodeMirror 核心程式 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+  <script src="vendor/codemirror/codemirror.min.js"></script>
+  <script src="vendor/codemirror/mode/python/python.min.js"></script>
+  <script src="vendor/codemirror/addon/edit/matchbrackets.min.js"></script>
 
   <script>
   // ============================================================
@@ -272,9 +270,7 @@
 
     function onWorkspaceChange() {
       try {
-        const code = codeGenMode === 'python'
-          ? getCode()
-          : Blockly.JavaScript.workspaceToCode(Blockly.mainWorkspace);
+        const code = getCode();
         syncEditor(code);
       } catch (e) {
         console.error('Code generation error:', e);
@@ -350,7 +346,6 @@
       const popup          = document.getElementById('popupWindow');
       const popupHeader    = document.getElementById('popupHeader');
       const closeBtn       = document.getElementById('closePopupBtn');
-      const openPopupBtn   = document.getElementById('openPopupBtn');
       const copyBtn        = document.getElementById('btn_copy_code');
       const resizeHandles  = document.querySelectorAll('.resize-handle');
       const content_blocks = document.getElementById('content_blocks');
@@ -384,11 +379,6 @@
           reader.readAsText(input.files[0]);
         };
         input.click();
-      });
-
-      /* 打開彈窗（JavaScript 模式）*/
-      openPopupBtn.addEventListener('click', function () {
-        openPopup('javascript', 'JavaScript 程式碼 (即時更新)');
       });
 
       /* 關閉彈窗 */
@@ -491,10 +481,6 @@
   })();
   </script>
 	<div id="content_blocks" class="content"></div>
-	<pre id="content_javascript" class="content prettyprint lang-js"></pre>
-	<pre id="content_python" class="content prettyprint lang-py"></pre>
-	<textarea id="content_xml" class="content" wrap="off">
-	</textarea>
 
   <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
     
