@@ -2993,3 +2993,24 @@ Blockly.Python['dedicated_input_data_block_type'] = function(block) {
   Blockly.Python.definitions_['input_data_init'] = "input_data = ''";
   return ['input_data', Blockly.Python.ORDER_ATOMIC];
 };
+
+//<block type="speak_out"></block>
+//======================================
+Blockly.Blocks['speak_out'] = {
+  init: function() {
+    this.appendValueInput("NAME")
+        .setCheck(null)
+        .appendField("說出");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(135);
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.Python['speak_out'] = function(block) {
+  var value = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_NONE) || "''";
+  return 'print(' + value + ')\n';
+};
