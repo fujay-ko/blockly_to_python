@@ -579,7 +579,7 @@
       <block type="text_append"><value name="TEXT"><shadow type="text"></shadow></value></block>
       <block type="text_length"><value name="VALUE"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>
       <block type="text_isEmpty"><value name="VALUE"><shadow type="text"><field name="TEXT"></field></shadow></value></block>
-      <block type="text_indexOf"><value name="VALUE"><shadow type="text"><field name="TEXT">hello world</field></shadow></value><value name="FIND"><shadow type="text"><field name="TEXT">world></shadow></value></block>
+      <block type="text_indexOf"><value name="VALUE"><shadow type="text"><field name="TEXT">hello world</field></shadow></value><value name="FIND"><shadow type="text"><field name="TEXT">world</shadow></value></block>
       <block type="text_charAt"> <mutation at="true"></mutation><field name="WHERE">FROM_START</field> <value name="VALUE"><shadow type="text"><field name="TEXT">abc</field></shadow></value><value name="AT"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>
       <block type="text_getSubstring"><mutation at1="true" at2="true"></mutation><field name="WHERE1">FROM_START</field><field name="WHERE2">FROM_START</field><value name="STRING"><shadow type="text"><field name="TEXT">abc</field></shadow></value><value name="AT1"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="AT2"><shadow type="math_number"><field name="NUM">2</field></shadow></value></block>
       <block type="text_changeCase"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>
@@ -599,8 +599,6 @@
       <block type="lists_sort"></block>
       <block type="lists_reverse"></block>
     </category>
-    
-    <sep></sep>
     
     <category name="{catVariables}" colour="330" custom="VARIABLE"></category>
     <category name="{catFunctions}" colour="290" custom="PROCEDURE"></category>
