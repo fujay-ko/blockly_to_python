@@ -145,6 +145,7 @@ Code.bindClick = function(el, func) {
   if (typeof el === 'string') {
     el = document.getElementById(el);
   }
+  if (!el) return;
   el.addEventListener('click', func, true);
   function touchFunc(e) {
     // Prevent code from being executed twice on touchscreens.
@@ -213,43 +214,52 @@ Code.selected = 'blocks';
  */
 Code.tabClick = function(clickedName) {
   
-  if (document.getElementById('tab_blocks').classList.contains('tabon')) {
+  var tabBlocks = document.getElementById('tab_blocks');
+  if (tabBlocks && tabBlocks.classList.contains('tabon')) {
     Code.workspace.setVisible(false);
   }
   // Deselect all tabs and hide all panes.
   for (var i = 0; i < Code.TABS_.length; i++) {
     var name = Code.TABS_[i];
     var tab = document.getElementById('tab_' + name);
-    tab.classList.add('taboff');
-    tab.classList.remove('tabon');
-    document.getElementById('content_' + name).style.visibility = 'hidden';
+    if (tab) {
+      tab.classList.add('taboff');
+      tab.classList.remove('tabon');
+    }
+    var pane = document.getElementById('content_' + name);
+    if (pane) pane.style.visibility = 'hidden';
   }
 
   // Select the active tab.
   Code.selected = clickedName;
   var selectedTab = document.getElementById('tab_' + clickedName);
-  selectedTab.classList.remove('taboff');
-  selectedTab.classList.add('tabon');
+  if (selectedTab) {
+    selectedTab.classList.remove('taboff');
+    selectedTab.classList.add('tabon');
+  }
   // Show the selected pane.
   document.getElementById('content_' + clickedName).style.visibility =
       'visible';
   Code.renderContent();
   // The code menu tab is on if the blocks tab is off.
   var codeMenuTab = document.getElementById('tab_code');
-  codeMenuTab.style.visibility = 'hidden';
-  document.getElementById('tab_python').style.visibility = 'hidden';
+  var tabPython = document.getElementById('tab_python');
+  if (codeMenuTab) codeMenuTab.style.visibility = 'hidden';
+  if (tabPython) tabPython.style.visibility = 'hidden';
   if (clickedName === 'blocks') {
     Code.workspace.setVisible(true);
-    codeMenuTab.className = 'taboff';
-  } else {
+    if (codeMenuTab) codeMenuTab.className = 'taboff';
+  } else if (codeMenuTab) {
     codeMenuTab.className = 'tabon';
   }
   // Sync the menu's value with the clicked tab value if needed.
   var codeMenu = document.getElementById('code_menu');
-  for (var i = 0; i < codeMenu.options.length; i++) {
-    if (codeMenu.options[i].value === clickedName) {
-      codeMenu.selectedIndex = i;
-      break;
+  if (codeMenu) {
+    for (var i = 0; i < codeMenu.options.length; i++) {
+      if (codeMenu.options[i].value === clickedName) {
+        codeMenu.selectedIndex = i;
+        break;
+      }
     }
   }
   Blockly.svgResize(Code.workspace);
@@ -340,11 +350,11 @@ Code.checkAllGeneratorFunctionsDefined = function(generator) {
  */
 Code.init = function() {
   Code.initLanguage();
-  /** 隱藏不需要的元件 by國源 */
-  document.getElementById('tab_blocks').style.display = 'none';
-  document.getElementById('tab_python').style.display = 'none';
-  document.getElementById('languageMenu').style.display = 'none';
-  document.getElementById('linkButton').style.display = 'none';
+  /** 隱藏不需要的元件 by國源（元素存在才動作，缺元素時直接略過） */
+  ['tab_blocks', 'tab_python', 'languageMenu', 'linkButton'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
   /** */
 
   var rtl = Code.isRtl();
@@ -424,15 +434,17 @@ Code.init = function() {
   // Code.bindClick('runButton', Code.runJS);
   // Disable the link button if page isn't backed by App Engine storage.
   var linkButton = document.getElementById('linkButton');
-  if ('BlocklyStorage' in window) {
-    BlocklyStorage['HTTPREQUEST_ERROR'] = MSG['httpRequestError'];
-    BlocklyStorage['LINK_ALERT'] = MSG['linkAlert'];
-    BlocklyStorage['HASH_ERROR'] = MSG['hashError'];
-    BlocklyStorage['XML_ERROR'] = MSG['loadError'];
-    Code.bindClick(linkButton,
-        function() {BlocklyStorage.link(Code.workspace);});
-  } else if (linkButton) {
-    linkButton.className = 'disabled';
+  if (linkButton) {
+    if ('BlocklyStorage' in window) {
+      BlocklyStorage['HTTPREQUEST_ERROR'] = MSG['httpRequestError'];
+      BlocklyStorage['LINK_ALERT'] = MSG['linkAlert'];
+      BlocklyStorage['HASH_ERROR'] = MSG['hashError'];
+      BlocklyStorage['XML_ERROR'] = MSG['loadError'];
+      Code.bindClick(linkButton,
+          function() {BlocklyStorage.link(Code.workspace);});
+    } else {
+      linkButton.className = 'disabled';
+    }
   }
 
   for (var i = 0; i < Code.TABS_.length; i++) {
@@ -440,13 +452,15 @@ Code.init = function() {
     Code.bindClick('tab_' + name,
         function(name_) {return function() {Code.tabClick(name_);};}(name));
   }
-  Code.bindClick('tab_code', function(e) {
-    if (e.target !== document.getElementById('tab_code')) {
-      // Prevent clicks on child codeMenu from triggering a tab click.
-      return;
-    }
-    Code.changeCodingLanguage();
-  });
+  if (document.getElementById('tab_code')) {
+    Code.bindClick('tab_code', function(e) {
+      if (e.target !== document.getElementById('tab_code')) {
+        // Prevent clicks on child codeMenu from triggering a tab click.
+        return;
+      }
+      Code.changeCodingLanguage();
+    });
+  }
 
   onresize();
   Blockly.svgResize(Code.workspace);
@@ -477,32 +491,38 @@ Code.initLanguage = function() {
   languages.sort(comp);
   // Populate the language selection menu.
   var languageMenu = document.getElementById('languageMenu');
-  languageMenu.options.length = 0;
-  for (var i = 0; i < languages.length; i++) {
-    var tuple = languages[i];
-    var lang = tuple[tuple.length - 1];
-    var option = new Option(tuple[0], lang);
-    if (lang === Code.LANG) {
-      option.selected = true;
+  if (languageMenu) {
+    languageMenu.options.length = 0;
+    for (var i = 0; i < languages.length; i++) {
+      var tuple = languages[i];
+      var lang = tuple[tuple.length - 1];
+      var option = new Option(tuple[0], lang);
+      if (lang === Code.LANG) {
+        option.selected = true;
+      }
+      languageMenu.options.add(option);
     }
-    languageMenu.options.add(option);
+    languageMenu.addEventListener('change', Code.changeLanguage, true);
   }
-  languageMenu.addEventListener('change', Code.changeLanguage, true);
 
   // Populate the coding language selection menu.
   var codeMenu = document.getElementById('code_menu');
-  codeMenu.options.length = 0;
-  for (var i = 1; i < Code.TABS_.length; i++) {
-    codeMenu.options.add(new Option(Code.TABS_DISPLAY_[i], Code.TABS_[i]));
+  if (codeMenu) {
+    codeMenu.options.length = 0;
+    for (var i = 1; i < Code.TABS_.length; i++) {
+      codeMenu.options.add(new Option(Code.TABS_DISPLAY_[i], Code.TABS_[i]));
+    }
+    codeMenu.addEventListener('change', Code.changeCodingLanguage);
   }
-  codeMenu.addEventListener('change', Code.changeCodingLanguage);
 
   // Inject language strings.
   document.title += ' ' + MSG['title'];
   //document.getElementById('title').textContent = MSG['title'];
   document.getElementById('tab_blocks').textContent = MSG['blocks'];
 
-  document.getElementById('linkButton').title = MSG['linkTooltip'];
+  if (document.getElementById('linkButton')) {
+    document.getElementById('linkButton').title = MSG['linkTooltip'];
+  }
   //document.getElementById('runButton').title = MSG['runTooltip'];
   document.getElementById('trashButton').title = MSG['trashTooltip'];
 };
