@@ -14,7 +14,7 @@ var MSG = {
   catColour: "顏色",
   catVariables: "變數",
   catFunctions: "函式",
-  listVariable: "列表",
+  listVariable: "清單",
   textVariable: "文字",
   httpRequestError: "命令出現錯誤。",
   linkAlert: "透過此連結分享您的積木組：\n\n%1",
