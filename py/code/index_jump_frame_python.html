@@ -35,7 +35,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/eclipse.min.css">
   <style>
-    #tabRow { display: none; }
     body {
       font-family: 'Microsoft JhengHei', Arial, sans-serif;
       padding: 20px;
@@ -55,7 +54,7 @@
     .btn-save   { background-color: #e24a6b; }
     .btn-load   { background-color: #4ae270; }
     .btn-python { background-color: #4a90e2; }
-    .btn-copy   { background-color: #17a2b8; color: white; }
+    .btn-copy   { background-color: #4CAF50; color: white; }
 
     /* tab 提示文字 */
     .hint-text { font-size: 13px; }
@@ -153,13 +152,6 @@
           <input id="input_load"  type="button" value="Load"        class="btn btn-load">
           <input type="button" value="python code" onclick="showPythonCode();" class="btn btn-python">
           <select id="languageMenu"></select>
-          <button id="btn_copy_code" class="btn btn-copy" title="複製程式碼">
-          <img src="media/copy.png" class="copy icon21">
-            <span style="font-size:14px;">複製程式碼</span>
-          </button>
-          <button id="trashButton" class="notext" title="清除所有積木">
-            <img src="media/1x1.gif" class="trash icon21">
-          </button>   
         </div>
       </td>
     </tr>
@@ -176,14 +168,14 @@
             </td>
             <td class="tabmax">
               <button id="btn_copy_code" title="複製程式碼">
-                <img src='media/copy.png' class="copy icon21">
+                <img src='../../media/copy.png' class="copy icon21">
                 <span style="font-size:16px;">複製程式碼</span>
               </button>
               <button id="trashButton" class="notext" title="...">
-                <img src='media/1x1.gif' class="trash icon21">
+                <img src='../../media/1x1.gif' class="trash icon21">
               </button>
               <button id="linkButton" class="notext" title="...">
-                <img src='media/1x1.gif' class="link icon21">
+                <img src='../../media/1x1.gif' class="link icon21">
               </button>
             </td>
           </tr>
@@ -218,9 +210,9 @@
   </div>
   
   <!-- 引入 CodeMirror 核心程式 -->
-  <script src="vendor/codemirror/codemirror.min.js"></script>
-  <script src="vendor/codemirror/mode/python/python.min.js"></script>
-  <script src="vendor/codemirror/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
 
   <script>
   // ============================================================
@@ -244,7 +236,13 @@
     let lastSelectedRow = null;    // 最後選中的 blocklyTreeRow
 
     /* ── 資料驅動：Tab 名稱 → YouTube 連結 ── */
-   
+    const TAB_HINTS = {
+      'opencv影像處理'  : 'https://www.youtube.com/watch?v=1ctcuUD7ci8&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=1',
+      'mediapip手部偵測': 'https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=4',
+      '鍵鼠外掛'        : 'https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=5',
+      '語音與文字處理'  : 'https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=6',
+      'youtube工具'     : 'https://www.youtube.com/watch?v=MnowZOsAVvQ&list=PLPE0QG97eXpji7ijpNc2iGu21Q4Y0xJ3s&index=7',
+    };
 
     /* ── 工具函式 ── */
 
@@ -479,7 +477,31 @@
       /* Tab 提示（資料驅動）*/
       const hintBase = '<span class="hint-text">（按住 shift 鍵拖曳可維持選單，按住 ctrl 鍵可拖曳單一方塊）</span>';
 
-      
+      if (content_blocks) {
+        content_blocks.addEventListener('click', function (e) {
+          const row = document.querySelector('.blocklyTreeRow.blocklyTreeSelected');
+          if (row) {
+            const text = row.textContent.trim();
+            let linkHTML = '';
+            for (const [kw, url] of Object.entries(TAB_HINTS)) {
+              if (text.includes(kw)) {
+                linkHTML = `<a href="${url}" target="_blank">${kw}示範&nbsp;</a>`;
+                break;
+              }
+            }
+            e_tab_hint1.innerHTML = linkHTML + hintBase;
+            e_tab_hint1.style.visibility = 'visible';
+          } else {
+            e_tab_hint1.style.visibility = 'hidden';
+          }
+
+          if (e.pageX > 200) {
+            if (lastSelectedRow !== null && e.shiftKey) lastSelectedRow.click();
+          } else {
+            lastSelectedRow = row;
+          }
+        });
+      }
 
       /* 主體點擊（shift 繼續插入）*/
       if (topElement) {
