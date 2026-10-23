@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" value="notranslate">
+  <title>Blockly to code python</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Blockly 核心：需同步載入，後續腳本依賴 -->
+  <script src="../../blockly_compressed.js"></script>
+  <script src="../../blocks_compressed.js"></script>
+  <script src="../../javascript_compressed.js"></script>
+  <script src="../../python_compressed.js"></script>
+  <!-- code.js 初始化 Blockly workspace，需同步 -->
+  <script src="code.js?v=3"></script>
+  <!-- 自定義積木模組加 defer，不阻塞渲染 -->
+  <script src="block_httpServer.js" defer></script>
+  <script src="block_opencv.js" defer></script>
+  <script src="block_numpy.js" defer></script>
+  <script src="block_python_functions.js" defer></script>
+  <script src="block_pyautogui.js" defer></script>
+  <script src="block_google_colab.js" defer></script>
+  <script src="block_keras.js" defer></script>
+  <script src="block_Data_HandWrite.js" defer></script>
+  <script src="block_sklearn.js" defer></script>
+  <script src="block_mediapipe.js" defer></script>
+  <script src="block_thread.js" defer></script>
+  <script src="block_serial.js" defer></script>
+  <script src="block_pygame.js" defer></script>
+  <script src="block_openai.js" defer></script>
+  <script src="block_string.js" defer></script>
+  <script src="block_comma.js" defer></script>
+
+  <!-- CodeMirror 核心樣式 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/eclipse.min.css">
+  <style>
+    body {
+      font-family: 'Microsoft JhengHei', Arial, sans-serif;
+      padding: 20px;
+    }
+
+    /* ===== 統一按鈕樣式（取代分散的 inline style）===== */
+    .btn {
+      font-size: 16px;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: filter 0.15s;
+    }
+    .btn:hover { filter: brightness(0.88); }
+    .btn-save   { background-color: #e24a6b; }
+    .btn-load   { background-color: #4ae270; }
+    .btn-python { background-color: #4a90e2; }
+    .btn-copy   { background-color: #4CAF50; color: white; }
+
+    /* tab 提示文字 */
+    .hint-text { font-size: 13px; }
+
+    /* ===== 彈出視窗 ===== */
+    .popup-container {
+      display: none;
+      position: fixed;
+      top: 50px;
+      right: 50px;
+      width: 600px;
+      height: 450px;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border-radius: 5px;
+      z-index: 1000;
+      min-width: 300px;
+      min-height: 200px;
+      overflow: visible;
+    }
+
+    .popup-header {
+      background-color: #f1f1f1;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      cursor: move;
+      user-select: none;
+    }
+
+    .popup-title {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 1001;
+      line-height: 1;
+    }
+
+    .popup-content {
+      height: calc(100% - 42px);
+      width: 100%;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ===== 縮放手柄 ===== */
+    .resize-handle {
+      position: absolute;
+      background-color: transparent;
+      z-index: 1000;
+    }
+    .resize-handle.nw { top:-5px; left:-5px; width:10px; height:10px; cursor:nw-resize; }
+    .resize-handle.ne { top:-5px; right:-5px; width:10px; height:10px; cursor:ne-resize; }
+    .resize-handle.sw { bottom:-5px; left:-5px; width:10px; height:10px; cursor:sw-resize; }
+    .resize-handle.se { bottom:-5px; right:-5px; width:10px; height:10px; cursor:se-resize; }
+    .resize-handle.n  { top:-5px; left:10px; right:10px; height:10px; cursor:n-resize; }
+    .resize-handle.s  { bottom:-5px; left:10px; right:10px; height:10px; cursor:s-resize; }
+    .resize-handle.w  { left:-5px; top:10px; bottom:10px; width:10px; cursor:w-resize; }
+    .resize-handle.e  { right:-5px; top:10px; bottom:10px; width:10px; cursor:e-resize; }
+    .resize-handle:hover { background-color: rgba(74,144,226,0.3); }
+
+    /* ===== CodeMirror ===== */
+    .CodeMirror {
+      height: 100%;
+      font-size: 14px;
+      font-family: monospace;
+      border: 1px solid #ddd;
+    }
+    .CodeMirror-linenumber { color: #999; padding-right: 8px; }
+    .CodeMirror-gutters {
+      border-right: 1px solid #ddd;
+      background-color: #f8f8f8;
+      padding-right: 8px;
+      width: 40px;
+    }
+    .CodeMirror-lines { padding-left: 8px; }
+  </style>
+</head>
+<body>
+  <table width="100%" height="100%">
+    <tr>
+      <td>
+        <div class="toolbar">
+          <input id="input_save"  type="button" value="Save"        class="btn btn-save">
+          <input id="input_load"  type="button" value="Load"        class="btn btn-load">
+          <input type="button" value="python code" onclick="showPythonCode();" class="btn btn-python">
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <table width="100%">
+          <tr id="tabRow" height="1em">
+            <td id="tab_blocks" class="tabon">...</td>
+            <td class="tabmin tab_collapse">&nbsp;</td>
+            <td class="tabmax">
+              <button id="btn_copy_code" title="複製程式碼">
+                <img src='../../media/copy.png' class="copy icon21">
+                <span style="font-size:16px;">複製程式碼</span>
+              </button>
+              <button id="trashButton" class="notext" title="...">
+                <img src='../../media/1x1.gif' class="trash icon21">
+              </button>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td height="99%" colspan="2" id="content_area"></td>
+    </tr>
+  </table>
+
+  <button class="button" id="openPopupBtn">打開可移動的彈出視窗</button>
+  
+  <div class="popup-container" id="popupWindow">
+    <!-- ========== 新增：縮放手柄 HTML ========== -->
+    <div class="resize-handle nw" data-direction="nw"></div>
+    <div class="resize-handle n" data-direction="n"></div>
+    <div class="resize-handle ne" data-direction="ne"></div>
+    <div class="resize-handle w" data-direction="w"></div>
+    <div class="resize-handle e" data-direction="e"></div>
+    <div class="resize-handle sw" data-direction="sw"></div>
+    <div class="resize-handle s" data-direction="s"></div>
+    <div class="resize-handle se" data-direction="se"></div>
+    <!-- ========== 縮放手柄 HTML 結束 ========== -->
+    <div class="popup-header" id="popupHeader">
+      <h3 class="popup-title">彈出視窗</h3>
+      <button class="close-button" id="closePopupBtn">&times;</button>
+    </div>
+    <div class="popup-content" id="popupContent">
+      <textarea id="pythonEditor"></textarea>
+    </div>
+  </div>
+  
+  <!-- 引入 CodeMirror 核心程式 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+
+  <script>
+  // ============================================================
+  //  單一 IIFE 模組 — 所有狀態封裝，不污染全域
+  // ============================================================
+  (function () {
+    'use strict';
+
+    /* ── 狀態 ── */
+    let editor = null;
+    let lastCode = '';             // 避免無變動時重複 setValue
+    let workspaceListener = null;  // Blockly change listener 參考
+    let codeGenMode = null;        // 'python' | 'javascript'
+
+    let isDragging  = false;
+    let isResizing  = false;
+    let resizeDir   = '';
+    let offsetX = 0, offsetY = 0;
+    let startX = 0, startY = 0, startW = 0, startH = 0, startL = 0, startT = 0;
+
+    let lastSelectedRow = null;    // 最後選中的 blocklyTreeRow
+
+
+    /* ── 工具函式 ── */
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    /** 取得 Python 程式碼，清除前導 None */
+    function getCode() {
+      let code = Blockly.Python.workspaceToCode(Blockly.mainWorkspace);
+      if (code.startsWith('None\n\n')) code = code.substring(6);
+      else if (code.startsWith('None\n')) code = code.substring(5);
+      return code;
+    }
+
+    function createAndDownloadFile(filename, data) {
+      const a = document.createElement('a');
+      a.href = window.URL.createObjectURL(data);
+      a.download = filename;
+      a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: false }));
+    }
+
+    /* ── CodeMirror ── */
+
+    function initCodeMirror() {
+      if (!editor) {
+        editor = CodeMirror.fromTextArea(document.getElementById('pythonEditor'), {
+          mode: 'python',
+          theme: 'eclipse',
+          lineNumbers: true,
+          matchBrackets: true,
+          indentUnit: 4,
+          tabSize: 4,
+          indentWithTabs: false,
+        });
+      }
+    }
+
+    function syncEditor(code) {
+      if (!editor || code === lastCode) return;
+      lastCode = code;
+      editor.setValue(code);
+    }
+
+    /* ── Blockly change 事件（取代 setInterval）── */
+
+    function onWorkspaceChange() {
+      try {
+        const code = codeGenMode === 'python'
+          ? getCode()
+          : Blockly.JavaScript.workspaceToCode(Blockly.mainWorkspace);
+        syncEditor(code);
+      } catch (e) {
+        console.error('Code generation error:', e);
+      }
+    }
+
+    function attachListener(mode) {
+      codeGenMode = mode;
+      if (workspaceListener) {
+        Blockly.mainWorkspace.removeChangeListener(workspaceListener);
+      }
+      workspaceListener = Blockly.mainWorkspace.addChangeListener(onWorkspaceChange);
+    }
+
+    function detachListener() {
+      if (workspaceListener) {
+        Blockly.mainWorkspace.removeChangeListener(workspaceListener);
+        workspaceListener = null;
+      }
+    }
+
+    /* ── 彈窗開關 ── */
+
+    function openPopup(mode, title) {
+      const popup = document.getElementById('popupWindow');
+      document.querySelector('.popup-title').textContent = title;
+      popup.style.display = 'block';
+      initCodeMirror();
+      attachListener(mode);
+      onWorkspaceChange(); // 立即產出一次
+    }
+
+    // 供 inline onclick 呼叫
+    window.showPythonCode = function () {
+      openPopup('python', 'Python Code');
+    };
+
+    /* ── 拖曳邊界限制 ── */
+
+    function clampPos(popup, x, y) {
+      return {
+        x: clamp(x, 0, window.innerWidth  - popup.offsetWidth),
+        y: clamp(y, 0, window.innerHeight - popup.offsetHeight),
+      };
+    }
+
+    /* ── 重置互動狀態（mouseup / blur 共用）── */
+
+    function resetInteraction() {
+      if (isResizing && editor) editor.refresh(); // 縮放結束後刷新一次
+      isDragging = isResizing = false;
+      resizeDir = '';
+    }
+
+    /* ── loadxml：供外部 Blockly 呼叫 ── */
+
+    window.loadxml = function (xml) {
+      if (typeof xml !== 'string' || xml.length < 5) { alert('No Input'); return false; }
+      try {
+        const dom = Blockly.Xml.textToDom(xml);
+        Blockly.mainWorkspace.clear();
+        Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
+        return true;
+      } catch (e) {
+        alert('Invalid xml');
+        return false;
+      }
+    };
+
+    /* ── 統一初始化 ── */
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const popup          = document.getElementById('popupWindow');
+      const popupHeader    = document.getElementById('popupHeader');
+      const closeBtn       = document.getElementById('closePopupBtn');
+      const openPopupBtn   = document.getElementById('openPopupBtn');
+      const copyBtn        = document.getElementById('btn_copy_code');
+      const resizeHandles  = document.querySelectorAll('.resize-handle');
+      const content_blocks = document.getElementById('content_blocks');
+      const topElement     = document.querySelector('body > table');
+
+      /* 複製按鈕 */
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          navigator.clipboard.writeText(getCode())
+            .then(() => alert('程式碼已複製到剪貼簿！'))
+            .catch(err => alert('複製程式碼失敗！' + err));
+        });
+      }
+
+      /* Save */
+      document.getElementById('input_save').addEventListener('click', function () {
+        const xmlDom  = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
+        const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+        const fileName = prompt('File Name for XML:', 'myblocks.xml');
+        if (!fileName) return;
+        createAndDownloadFile(fileName, new Blob([xmlText], { type: 'text/xml' }));
+      });
+
+      /* Load */
+      document.getElementById('input_load').addEventListener('click', function () {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = () => {
+          const reader = new FileReader();
+          reader.onload = () => loadxml(reader.result);
+          reader.readAsText(input.files[0]);
+        };
+        input.click();
+      });
+
+      /* 打開彈窗（JavaScript 模式）*/
+      openPopupBtn.addEventListener('click', function () {
+        openPopup('javascript', 'JavaScript 程式碼 (即時更新)');
+      });
+
+      /* 關閉彈窗 */
+      closeBtn.addEventListener('click', function () {
+        popup.style.display = 'none';
+        detachListener();
+      });
+
+      /* 拖曳 */
+      popupHeader.addEventListener('mousedown', function (e) {
+        if (e.target === closeBtn || e.target.classList.contains('resize-handle')) return;
+        isDragging = true;
+        const r = popup.getBoundingClientRect();
+        offsetX = e.clientX - r.left;
+        offsetY = e.clientY - r.top;
+        e.preventDefault();
+      });
+
+      /* 縮放手柄 */
+      resizeHandles.forEach(handle => {
+        handle.addEventListener('mousedown', function (e) {
+          isResizing = true;
+          resizeDir  = handle.dataset.direction;
+          startX = e.clientX; startY = e.clientY;
+          const r = popup.getBoundingClientRect();
+          startW = r.width; startH = r.height;
+          startL = r.left;  startT = r.top;
+          e.preventDefault();
+          e.stopPropagation();
+        });
+        handle.addEventListener('click', e => e.stopPropagation());
+      });
+
+      /* mousemove：拖曳 + 縮放 */
+      const MIN_W = 300, MIN_H = 200;
+      document.addEventListener('mousemove', function (e) {
+        if (!isDragging && !isResizing) return;
+
+        if (isDragging) {
+          const { x, y } = clampPos(popup, e.clientX - offsetX, e.clientY - offsetY);
+          popup.style.left = x + 'px';
+          popup.style.top  = y + 'px';
+        }
+
+        if (isResizing) {
+          const dX = e.clientX - startX, dY = e.clientY - startY;
+          let nW = startW, nH = startH, nL = startL, nT = startT;
+          switch (resizeDir) {
+            case 'se': nW+=dX; nH+=dY; break;
+            case 'sw': nW-=dX; nH+=dY; nL+=dX; break;
+            case 'ne': nW+=dX; nH-=dY; nT+=dY; break;
+            case 'nw': nW-=dX; nH-=dY; nL+=dX; nT+=dY; break;
+            case 'n':  nH-=dY; nT+=dY; break;
+            case 's':  nH+=dY; break;
+            case 'w':  nW-=dX; nL+=dX; break;
+            case 'e':  nW+=dX; break;
+          }
+          if (nW >= MIN_W) { popup.style.width = nW+'px'; popup.style.left = nL+'px'; }
+          if (nH >= MIN_H) { popup.style.height= nH+'px'; popup.style.top  = nT+'px'; }
+          requestAnimationFrame(() => { if (editor) editor.refresh(); });
+        }
+      });
+
+      /* mouseup / blur：重置狀態 */
+      document.addEventListener('mouseup', resetInteraction);
+      window.addEventListener('blur', resetInteraction);
+
+      if (content_blocks) {
+        content_blocks.addEventListener('click', function (e) {
+          const row = document.querySelector('.blocklyTreeRow.blocklyTreeSelected');
+
+          if (e.pageX > 200) {
+            if (lastSelectedRow !== null && e.shiftKey) lastSelectedRow.click();
+          } else {
+            lastSelectedRow = row;
+          }
+        });
+      }
+
+      /* 主體點擊（shift 繼續插入）*/
+      if (topElement) {
+        topElement.addEventListener('click', function () {
+          if (lastSelectedRow !== null) {
+            lastSelectedRow.click();
+            lastSelectedRow = null;
+          }
+        });
+      }
+
+      /* 鍵盤 */
+      document.addEventListener('keyup', function (e) {
+        if (e.key === 'Escape') { lastSelectedRow = null; }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          lastSelectedRow = document.querySelector('.blocklyTreeRow.blocklyTreeSelected');
+        }
+      });
+
+    }); // end DOMContentLoaded
+
+  })();
+  </script>
+	<div id="content_blocks" class="content"></div>
+	<pre id="content_javascript" class="content prettyprint lang-js"></pre>
+	<pre id="content_python" class="content prettyprint lang-py"></pre>
+	<textarea id="content_xml" class="content" wrap="off">
+	</textarea>
+
+  <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
+	
+    <category name="邏輯" colour="%{BKY_LOGIC_HUE}">
+      <block type="python_input"></block>
+      <block type="if"></block>
+      <block type="elif"></block>
+      <block type="else"></block>
+      <block type="ifelse"></block>
+      <block type="python_logic_operation"></block>
+      <block type="python_logic_boolean"></block>		
+      <block type="block_any_line"><field name="NAME"># 繼續迴圈，跳過下方敘述</field><next><block type="python_continue"></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 跳出迴圈</field><next><block type="python_break"></block></next></block> 
+      <block type="variables_get"><field name="VAR">s</field></block>
+      <!--字串雙引號-->
+      <block type="logic_not"></block>
+      <block type="block_string_double_quotes"></block>
+      <block type="math_number"><field name="NUM">0</field></block>
+    </category>
+  
+    <category name="迴圈" colour="%{BKY_LOOPS_HUE}">
+      <block type="block_any_line"><field name="NAME"># 重複指定次數</field><next><block type="for_loop"></block></next></block>
+      <block type="for_i_in_"></block>
+      <block type="python_range"><value name="NAME"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block>
+      <block type="python_range2"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block>
+      <block type="python_range3"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">5</field></shadow></value><value name="NAME3"><shadow block type="math_number"><field name="NUM">1</field></shadow></value></block>
+      <block type="while"></block>
+      <block type="block_any_line"><field name="NAME"># 重複無限次</field><next><block type="while"><value name="NAME"><block type="logic_boolean"><field name="NAME1">True</field></block></value></block></next></block>
+      <block type="python_any"><field name="NAME"></field></block>
+    </category>
+  
+    <category name="字串" colour="%{BKY_TEXTS_HUE}">
+      <!--字串雙引號-->
+      <block type="block_string_double_quotes"></block>
+      <!--字串單引號-->
+      <block type="block_string"></block>
+      <!--空字串-->
+      <block type="block_emptystring"></block>
+      <!--字串f-string-->
+      <block type="block_fstring"></block>
+      <!--字串binary-string-->
+      <block type="bytestring"></block>
+      <block type="string_operations"></block>
+      <block type="string_split"><value name="NAME1"><shadow type="text"><field name="TEXT"></field></shadow></value></block>
+      <block type="string_strip"><value name="NAME1"><shadow type="text"><field name="TEXT"></field></shadow></value></block>
+      <block type="string_decode"><value name="NAME1"><shadow type="text"><field name="TEXT"></field></shadow></value></block>
+      <block type="string_encode"><value name="NAME1"><shadow type="text"><field name="TEXT"></field></shadow></value></block>
+      <block type="plus2"><value name="NAME1"><shadow type="block_string"><field name="NAME"></field></shadow></value><value name="NAME2"><shadow type="block_string"><field name="NAME"></field></shadow></value></block>
+      <block type="plus3"><value name="NAME1"><shadow type="block_string"><field name="NAME"></field></shadow></value><value name="NAME2"><shadow type="block_string"><field name="NAME"></field></shadow></value><value name="NAME3"><shadow type="block_string"><field name="NAME"></field></shadow></value></block>
+      <block type="plus4"><value name="NAME1"><shadow type="block_string"><field name="NAME"></field></shadow></value><value name="NAME2"><shadow type="block_string"><field name="NAME"></field></shadow></value><value name="NAME3"><shadow type="block_string"><field name="NAME"></field></shadow></value><value name="NAME4"><shadow type="block_string"><field name="NAME"></field></shadow></value></block>
+      <block type="plus5"><value name="NAME1"><shadow type="block_string"><field name="NAME"></field></shadow></value><value name="NAME2"><shadow type="block_string"><field name="NAME"></field></shadow></value><value name="NAME3"><shadow type="block_string"><field name="NAME"></field></shadow></value><value name="NAME4"><shadow type="block_string"><field name="NAME"></field></shadow></value><value name="NAME5"><shadow type="block_string"><field name="NAME"></field></shadow></value></block>
+      <block type="text_count"><value name="SUB"><shadow type="text"></shadow></value><value name="TEXT"><shadow type="text"></shadow></value></block>
+      <block type="text_replace"><value name="FROM"><shadow type="text"></shadow></value><value name="TO"><shadow type="text"></shadow></value><value name="TEXT"><shadow type="text"></shadow></value></block>
+      <block type="text_reverse"><value name="TEXT"><shadow type="text"></shadow></value></block><label text="Input/Output:" web-class="ioLabel"></label>
+    </category>
+    
+    <category name="容器" colour="%{BKY_LISTS_HUE}">
+    <category name="符號逗號連接" colour="%{BKY_LISTS_HUE}">
+      <block type="python_any"><field name="NAME"></field></block>
+      <!--註解-->
+      <block type="block_any_line"><field name="NAME"># 註解</field></block>
+      <!--上下連接-->
+      <block type="tb_connection"></block>
+      <!--#any statement-->
+      <block type="python_any_statement"></block>
+      <!--transform to statement-->
+      <block type="python_transform_mode"></block>
+      <!-- . -->
+     <block type="block_get_anyconcat"></block>
+      <!-- . -->
+      <block type="block_dot1"></block>
+      <block type="block_comma2"></block>
+      <block type="block_comma3"></block>
+      <block type="block_comma4"></block>
+      <block type="block_comma5"></block>
+      <block type="block_comma6"></block>
+      <block type="block_comma7"></block>
+      <block type="block_comma8"></block>
+      <block type="block_comma9"></block>
+      <block type="block_comma10"></block>
+     </category>
+    
+      <block type="python_list"></block>
+      <block type="python_dict"></block>
+      <block type="python_set"></block>
+      <block type="list_value"></block>
+      <block type="list_operations"></block>
+      <block type="list_operations_up"></block>
+      <block type="list_for_input_1d"></block>
+      <block type="list_by3"><value name="VALUE_DIM1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="VALUE_DIM2"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="VALUE_DIM3"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>	
+      <block type="list_by2"><value name="VALUE2_DIM1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="VALUE2_DIM2"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
+      <block type="build_tuple3"><value name="TUPLE3_V1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="TUPLE3_V2"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="TUPLE3_V3"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
+      <block type="build_tuple2"><value name="TUPLE2_V1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="TUPLE2_V2"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
+      <block type="numpy_var_dim1"><!--<value name="DIM1_START"><shadow type="math_number"><field name="NUM">0</field></shadow></value>--><!--<value name="DIM1_END"><shadow type="math_number"><field name="NUM">0</field></shadow></value>--></block>
+      <block type="numpy_var_dim3"></block>
+      <block type="numpy_var_dim2"><value name="DIM21_START"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="DIM21_END"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="DIM22_START"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="DIM22_END"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
+      <block type="list_getDim1"><value name="NAME1"><block type="variables_get"><field name="VAR">a_list</field></block></value></block>
+      <block type="list_append"><value name="list_append_V1"><block type="variables_get"><field name="VAR">a_list</field></block></value></block>
+      <block type="empty_list"></block>
+      <!--colon冒號 a:b-->
+      <block type="block_colon_a_b"></block>
+      <!--colon冒號 a:b:c-->
+      <block type="block_colon_a_b_c"></block>
+      <block type="block_parentheses"></block>
+      <block type="python_big_parantheses"></block>
+      <block type="create_arrayin"></block>
+      <block type="python_in"></block>
+    </category>
+  
+    <!--<category name="%{BKY_CATMATH}" colour="%{BKY_MATH_HUE}">-->
+    <category name="數學式" colour="%{BKY_MATH_HUE}">
+      <block type="operator"><field name="NAME3"> + </field><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
+      <block type="compound_operator"><field name="NAME3"> += </field><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
+      <block type="bitwise_Operation"><field name="NAME3"> | </field><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
+      <block type="math_value_left"></block>
+      <block type="math_number"><field name="NUM">0</field></block>
+      <block type="math_arithmetic"><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>
+      <block type="math_single"><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value></block>
+      <block type="math_trig"> <value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value></block>
+      <block type="math_constant"></block>	
+    </category> 
+    
+    <category name="變數" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE">
+    
+    </category>
+    <category name="變數賦值" colour="%{BKY_VARIABLES_HUE}">
+      <block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">v</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">0</field></block></value></block><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">check</field></block></value><value name="NAME2"><block type="logic_boolean"><field name="NAME1">True</field></block></value></block><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">temp</field></block></value><value name="NAME2"><block type="block_fstring"><field name="NAME1"></field></block></value></block>
+      <block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">temp</field></block></value><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">min</field></block></value><value name="NAME2"><block type="list_by3"><value name="VALUE_DIM1"><shadow type="math_number"><field name="NUM">3</field></shadow></value><value name="VALUE_DIM2"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="VALUE_DIM3"><shadow type="math_number"><field name="NUM">2</field></shadow></value></block></value></block></value></block>
+      <!--等號指定值-->
+      <block type="block_assign"></block>
+      <!--等號左結合-->
+      <block type="block_equal_"></block>
+      <!-- = -->
+      <block type="block_anyconcat"></block>
+      <block type="variables_get"><field name="VAR">a_list</field></block>
+      <block type="variables_get"><field name="VAR">num</field></block>
+    </category>	
+    
+    
+    <category name="函式" colour="%{BKY_PROCEDURES_HUE}">
+    <category name="套件" colour="%{BKY_PROCEDURES_HUE}">
+      <block type="import_var"><value name="NAME2"><block type="python_any"><field name="NAME">time</field></block></value></block>
+      <!--#import as-->
+      <block type="import_as"><value name="NAME1"><block type="python_any"><field name="NAME"></field></block></value><value name="NAME2"><block type="python_any"><field name="NAME"></field></block></value></block>
+      <!--#隨機取0~9之間的整數-->
+      <block type="from_import"><value name="NAME1"><block type="python_any"><field name="NAME">random</field></block></value><value name="NAME2"><block type="python_any"><field name="NAME">randint</field></block></value><next><block type="python_any_statement"><field name="NAME1">#隨機取0~9之間的整數</field><next><block type="block_anyconcat"><field name="NAME2">=</field><value name="NAME1"><block type="variables_get"><field name="VAR">r</field></block></value><value name="NAME3"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">randint</field></block></value><value name="NAME2"><block type="block_comma"><value name="NAME1"><block type="math_number"><field name="NUM">0</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">9</field></block></value></block></value></block></value></block></next></block></next></block>
+      <!--<block type="controls_if"></block>-->
+      <!--<block type="logic_compare"></block>-->
+      <block type="import_var"><value name="NAME2"><block type="python_any"><field name="NAME">random</field></block></value><next><block type="block_any_line"><field name="NAME">#隨機生成0~3的整數指定給i</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">i</field></block></value><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">random.randint</field></block></value><value name="NAME2"><block type="block_comma2"><value name="NAME1"><block type="math_number"><field name="NUM">0</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">3</field></block></value></block></value></block></value><next><block type="block_any_line"><field name="NAME">#如果i等於0</field><next><block type="if"><value name="NAME1"><block type="logic_operation"><field name="NAME3">==</field><value name="NAME1"><block type="variables_get"><field name="VAR">i</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">0</field></block></value></block></value><statement name="NAME2"><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="block_string"><field name="NAME">i等於0</field></block></value></block></statement><next><block type="block_any_line"><field name="NAME">#否則如果i等於1</field><next><block type="elif"><value name="NAME1"><block type="logic_operation"><field name="NAME3">==</field><value name="NAME1"><block type="variables_get"><field name="VAR">i</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">1</field></block></value></block></value><statement name="NAME2"><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="block_string"><field name="NAME">i等於1</field></block></value></block></statement><next><block type="block_any_line"><field name="NAME">#否則(以上條件皆沒發生)</field><next><block type="else"><statement name="NAME2"><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="block_string"><field name="NAME">其它狀況</field></block></value></block></statement></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block>
+      <!--<block type="logic_null"></block>-->
+      <!--<block type="logic_ternary"></block>-->
+      <block type="block_any_line"><field name="NAME"># 範例：偵測到p鍵按後，跳出重窮迴圈</field><next><block type="block_any_line"><field name="NAME">import keyboard</field><next><block type="while"><value name="NAME"><block type="logic_boolean"><field name="NAME1">True</field></block></value><statement name="NAME1"><block type="if"><value name="NAME1"><block type="logic_operation"><field name="NAME3">==</field><value name="NAME1"><block type="any_func_value"><field name="NAME">keyboard.is_pressed</field><value name="NAME"><block type="python_any"><field name="NAME">'p'</field></block></value></block></value><value name="NAME2"><block type="logic_boolean"><field name="NAME1">True</field></block></value></block></value><statement name="NAME2"><block type="python_break"></block></statement></block></statement></block></next></block></next></block>
+      <block type="try_except"><value name="NAME2"><block type="variables_get"><field name="VAR">e</field></block></value></block>
+      <block type="try_except_zero"></block>
+    </category>	
+      <block type="block_any_line"><field name="NAME">'''</field><next><block type="block_any_line"><field name="NAME">傳入「函式」的「參數」要用逗號隔開</field><next><block type="block_any_line"><field name="NAME">每個「函式」都會有名稱，ex:下面範例的函式名稱叫做Sum</field><next><block type="block_any_line"><field name="NAME">'''</field></block></next></block></next></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 自訂義函式 Sum，傳入 a, b 回傳 a+b</field><next><block type="block_def"><value name="NAME1"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">Sum</field></block></value><value name="NAME2"><block type="block_comma2"><value name="NAME1"><block type="variables_get"><field name="VAR">a</field></block></value><value name="NAME2"><block type="variables_get"><field name="VAR">b</field></block></value></block></value></block></value><statement name="NAME2"><block type="block_any_line"><field name="NAME"># 回傳</field><next><block type="block_return_"><value name="NAME2"><block type="math_arithmetic"><field name="OP">ADD</field><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow><block type="variables_get"><field name="VAR">a</field></block></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow><block type="variables_get"><field name="VAR">b</field></block></value></block></value></block></next></block></statement><next><block type="block_any_line"><field name="NAME"># 呼叫 Sum 把 2 和 3 相加得到 5 並印出來</field><next><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">Sum</field></block></value><value name="NAME2"><block type="block_comma2"><value name="NAME1"><block type="math_number"><field name="NUM">2</field></block></value><value name="NAME2"><block type="math_number"><field name="NUM">3</field></block></value></block></value></block></value></block></next></block></next></block></next></block>
+      <!--def function :statement-->
+      <block type="block_def"><value name="NAME1"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">foo</field></block></value><value name="NAME2"><block type="cammaconcat"><field name="NAME3">n,m=1</field></block></value></block></value></block>
+      <!--indent statement like ...def ... -->
+      <block type="any_indent_statement"></block>	
+      <!--class ___:statement-->
+      <block type="block_class"><value name="NAME1"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">node</field></block></value><value name="NAME2"><block type="python_any"><field name="NAME">object</field></block></value></block></value><statement name="NAME2"><block type="block_def"><value name="NAME1"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">__init__</field></block></value><value name="NAME2"><block type="block_comma"><value name="NAME1"><block type="cammaconcat"><field name="NAME3">self</field></block></value><value name="NAME2"><block type="cammaconcat"><field name="NAME3">a=1</field></block></value></block></value></block></value><statement name="NAME2"><block type="block_assign"><value name="NAME1"><block type="block_get_anyconcat"><field name="NAME2">.</field><value name="NAME1"><block type="cammaconcat"><field name="NAME3">self</field></block></value><value name="NAME3"><block type="cammaconcat"><field name="NAME3">a</field></block></value></block></value><value name="NAME2"><block type="cammaconcat"><field name="NAME3">a</field></block></value></block></statement></block></statement></block>
+      <block type="statement_var"></block>
+      <block type="block_return_"><value name="NAME2"><block type="variables_get"><field name="VAR">v</field></block></value></block>
+      <block type="python_global"></block>
+      <block type="obj_method"><field name="NAME1">mic</field><field name="NAME2">record</field><value name="NAME2"><block type="python_any"><field name="NAME">filename="1.wav",dur=25,TH=0.02,SilenceNum=50</field></block></value></block>
+    </category>
+    <!--<category name="%{BKY_CATVARIABLES}" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>-->
+    <category name="輸入輸出" colour="#8ca55b">
+      <block type="block_input"></block>
+      <block type="block_any_line"><field name="NAME"># 使用者輸入以字串的型式存入A</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">A</field></block></value><value name="NAME2"><block type="block_input"><value name="NAME"><block type="block_string"><field name="NAME"></field></block></value></block></value></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 使用者輸入以整數的型式存入B</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">B</field></block></value><value name="NAME2"><block type="python_int"><value name="python_int_V"><block type="block_input"><value name="NAME"><block type="block_string"><field name="NAME"></field></block></value></block></value></block></value></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 使用者輸入以浮點數的型式存入C</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">C</field></block></value><value name="NAME2"><block type="python_float"><value name="python_float_V"><block type="block_input"><value name="NAME"><block type="block_string"><field name="NAME"></field></block></value></block></value></block></value></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 參數</field><next><block type="block_print_all"><field name="NAME2">sep = " "</field><field name="NAME3">end = "\n"</field></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 輸出換行</field><next><block type="print_newline"><field name="NAME2">end = "\n"</field></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 輸出不換行</field><next><block type="print_No_line_breaks"><field name="NAME2">end = ""</field></block></next></block>
+      <block type="block_print_single"><value name="NAME"><block type="block_fstring"><field name="NAME1"></field></block></value></block>
+      <block type="block_print_single"></block>
+      <block type="block_print_single"><value name="NAME"><shadow type="block_string_double_quotes"><field name="NAME"></field></shadow></value></block>
+      <block type="f_string_variable"></block>
+      <block type="f_string_block"></block>
+      <block type="fstring_format_block"></block>
+      <block type="cammaconcat"><field name="NAME3"></field></block>
+      <block type="python_any"></block><!--\n-->
+      <block type="tb_connection"></block>
+      <block type="block_any_line"><field name="NAME"># 把字串 "1234" 轉換成整數 1234 回存變數v</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">v</field></block></value><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="block_python_type"><field name="NAME1">int</field></block></value><value name="NAME2"><block type="block_string"><field name="NAME">1234</field></block></value></block></value></block></next></block>
+      <block type="block_any_line"><field name="NAME"># zerojudge格式</field><next><block type="while"><value name="NAME"><block type="logic_boolean"><field name="NAME1">True</field></block></value><statement name="NAME1"><block type="try_except_zero"><statement name="NAME1"><block type="block_any_line"><field name="NAME"># 主程式</field></block></statement><statement name="NAME2"><block type="python_break"></block></statement></block></statement></block></next></block>
+      <block type="block_any_line"><field name="NAME"># split範例</field><next><block type="block_any_line"><field name="NAME"># 把字串 "1 2 3 4" 按預設的空白字元分割成陣列 ['1','2','3','4' ]</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">A</field></block></value><value name="NAME2"><block type="string_split"><field name="NAME2"></field><value name="NAME1"><shadow type="text"><field name="TEXT">1  2  3  4</field></shadow></value></block></value><next><block type="print_newline"><field name="NAME2">end="\n"</field><value name="NAME1"><block type="variables_get"><field name="VAR">A</field></block></value></block></next></block></next></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 字串A按預設的空白字元分割成陣列後回存</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">A</field></block></value><value name="NAME2"><block type="string_split"><field name="NAME2"></field><value name="NAME1"><shadow type="text"><field name="TEXT">1  2  3  4</field></shadow><block type="variables_get"><field name="VAR">A</field></block></value></block></value></block></next></block>
+      <block type="block_any_line"><field name="NAME"># map 範例</field><next><block type="block_any_line"><field name="NAME"># 把串列A中的所有元素皆套入int( )函式，變成一個int串列</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">A</field></block></value><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">map</field></block></value><value name="NAME2"><block type="block_comma2"><value name="NAME1"><block type="block_python_type"><field name="NAME1">int</field></block></value><value name="NAME2"><block type="variables_get"><field name="VAR">A</field></block></value></block></value></block></value></block></next></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 使用者輸入以空格分割整數的型式存入串列容器</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">A</field></block></value><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">list</field></block></value><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">map</field></block></value><value name="NAME2"><block type="block_comma2"><value name="NAME1"><block type="block_python_type"><field name="NAME1">int</field></block></value><value name="NAME2"><block type="string_split"><field name="NAME2"></field><value name="NAME1"><shadow type="text"><field name="TEXT">1  2  3  4</field></shadow><block type="block_input"></block></value></block></value></block></value></block></value></block></value></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 使用者輸入以空格分開以整數的型式存入多個變數</field><next><block type="block_assign"><value name="NAME2"><block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME">map</field></block></value><value name="NAME2"><block type="block_comma2"><value name="NAME1"><block type="block_python_type"><field name="NAME1">int</field></block></value><value name="NAME2"><block type="string_split"><field name="NAME2"></field><value name="NAME1"><shadow type="text"><field name="TEXT">1  2  3  4</field></shadow><block type="block_input"></block></value></block></value></block></value></block></value></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 一維串列生成式</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">a_list</field></block></value><value name="NAME2"><block type="list_for_input_1d"><value name="NAME1"><block type="python_int"><value name="python_int_V"><block type="python_any"><field name="NAME"></field></block></value></block></value><value name="NAME2"><block type="python_any"><field name="NAME"></field></block></value><value name="NAME3"><block type="string_split"><field name="NAME2"></field><value name="NAME1"><shadow type="text"><field name="TEXT">1  2  3  4</field></shadow><block type="block_input"></block></value></block></value></block></value></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 二維串列生成式</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">a_list</field></block></value><value name="NAME2"><block type="list_for_input_1d"><value name="NAME1"><block type="list_for_input_1d"><value name="NAME1"><block type="python_int"><value name="python_int_V"><block type="python_any"><field name="NAME">x</field></block></value></block></value><value name="NAME2"><block type="python_any"><field name="NAME">x</field></block></value><value name="NAME3"><block type="string_split"><field name="NAME2"></field><value name="NAME1"><shadow type="text"><field name="TEXT">1  2  3  4</field></shadow><block type="block_input"></block></value></block></value></block></value><value name="NAME2"><block type="python_any"><field name="NAME">y</field></block></value><value name="NAME3"><block type="python_range"><value name="NAME"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block></value></block></value></block></next></block>
+      <block type="block_any_line"><field name="NAME"># 二維串列生成</field><next><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">a_list</field></block></value><value name="NAME2"><block type="create_arrayin"></block></value><next><block type="for_i_in_"><field name="NAME2">i</field><value name="NAME1"><block type="python_range"><value name="NAME"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block></value><statement name="3"><block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">temp</field></block></value><value name="NAME2"><block type="list_for_input_1d"><value name="NAME1"><block type="python_int"><value name="python_int_V"><block type="python_any"><field name="NAME">y</field></block></value></block></value><value name="NAME2"><block type="python_any"><field name="NAME">y</field></block></value><value name="NAME3"><block type="string_split"><field name="NAME2"></field><value name="NAME1"><shadow type="text"><field name="TEXT">1  2  3  4</field></shadow><block type="block_input"></block></value></block></value></block></value><next><block type="list_append"><value name="list_append_V1"><block type="variables_get"><field name="VAR">a_list</field></block></value><value name="list_append_V2"><block type="variables_get"><field name="VAR">temp</field></block></value></block></next></block></statement></block></next></block></next></block>
+    </category>
+    
+    <category name="類型轉換" colour="#8ca55b">
+      <!--#function 有介接指定-->
+      <block type="any_in_brackets"><value name="NAME1"><block type="python_any"><field name="NAME"></field></block></value><value name="NAME2"><block type="python_any"><field name="NAME"></field></block></value></block>
+      <!--#function 無介接指定-->
+      <block type="block_func"><value name="NAME1"><block type="python_any"><field name="NAME"></field></block></value><value name="NAME2"><block type="python_any"><field name="NAME"></field></block></value></block>
+      <!--常見型態轉換可用函式名稱-->
+      <block type="block_python_type"></block>
+      <block type="block_any_line"><field name="NAME">'''</field><next><block type="block_any_line"><field name="NAME">Note:字串和數值兩種型態可以互相轉換</field><next><block type="block_any_line"><field name="NAME">str(123) ==&gt;把數值123轉換為字串"123"</field><next><block type="block_any_line"><field name="NAME">int("123") ==&gt;把字串"123"轉換為數值123</field><next><block type="block_any_line"><field name="NAME">'''</field></block></next></block></next></block></next></block></next></block>
+      <block type="python_int"></block>
+      <block type="python_float"></block>
+      <block type="python_str"></block>
+      <block type="python_map"></block>
+      <block type="python_bytes"></block>
+    </category>	
+    
+    <sep></sep>
+    
+     <category name="專用" colour="230">
+      <block type="dedicated_input"></block>
+      <block type="dedicated_input_data_block_type"></block>
+      <block type="speak_out"></block>
+    </category>
+    
+    <category name="{catLogic}" colour="210">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null"></block>
+      <block type="logic_ternary"></block>
+    </category>
+    
+    <category name="{catLoops}" colour="120">
+      <block type="controls_repeat_ext"><value name="TIMES"><shadow type="math_number"><field name="NUM">10</field></shadow></value></block>
+      <block type="controls_whileUntil"></block>
+      <block type="controls_for"><value name="FROM"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="TO"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="BY"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>
+      <block type="controls_forEach"></block>
+      <block type="controls_flow_statements"></block>
+    </category>
+    
+    <category name="{catMath}" colour="230">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>
+      <block type="math_single"><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value></block>
+      <block type="math_trig"><value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value></block>
+      <block type="math_constant"></block>
+      <block type="math_number_property"><value name="NUMBER_TO_CHECK"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>
+      <block type="math_round"><value name="NUM"><shadow type="math_number"><field name="NUM">3.1</field></shadow></value></block>
+      <block type="math_on_list"></block>
+      <block type="math_modulo"><value name="DIVIDEND"><shadow type="math_number"><field name="NUM">64</field></shadow></value><value name="DIVISOR"><shadow type="math_number"><field name="NUM">10</field></shadow></value></block>
+      <block type="math_constrain"><value name="VALUE"><shadow type="math_number"><field name="NUM">50</field></shadow></value><value name="LOW"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="HIGH"><shadow type="math_number"><field name="NUM">100</field></shadow></value></block>
+      <block type="math_random_int"><value name="FROM"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="TO"><shadow type="math_number"><field name="NUM">100</field></shadow></value></block>
+      <block type="math_random_float"></block>
+    </category>
+    
+    <category name="{catText}" colour="160">
+      <block type="python_input"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>
+      <block type="text"></block>
+      <block type="text_join"></block>
+      <block type="text_print"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>
+      <block type="text_prompt_ext"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>
+      <block type="text_append" value="TEXT"><shadow type="text"></shadow></block>
+      <block type="text_length" value="VALUE"><shadow type="text"><field name="TEXT">abc</field></shadow></block>
+      <block type="text_isEmpty"><value name="VALUE"><shadow type="text"><field name="TEXT"></field></shadow></value></block>
+      <block type="text_indexOf"><value name="VALUE"><shadow type="text"><field name="TEXT">hello world</field></shadow></value><value name="FIND"><shadow type="text"><field name="TEXT">world</shadow></value></block>
+      <block type="text_charAt"> <mutation at="true"></mutation><field name="WHERE">FROM_START</field> <value name="VALUE"><shadow type="text"><field name="TEXT">abc</field></shadow></value><value name="AT"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>
+      <block type="text_getSubstring"><mutation at1="true" at2="true"></mutation><field name="WHERE1">FROM_START</field><field name="WHERE2">FROM_START</field><value name="STRING"><shadow type="text"><field name="TEXT">abc</field></shadow></value><value name="AT1"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="AT2"><shadow type="math_number"><field name="NUM">2</field></shadow></value></block>
+      <block type="text_changeCase" value="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></block>
+      <block type="text_trim"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>
+    </category>
+    
+    <category name="{catLists}" colour="260">
+      <block type="lists_create_with"> <mutation items="0"></mutation></block><block type="lists_create_with"></block>
+      <block type="lists_repeat"><value name="NUM"><shadow type="math_number"><field name="NUM">5</field></shadow></value></block>
+      <block type="lists_length"></block>
+      <block type="lists_isEmpty"></block>
+      <block type="lists_indexOf"><value name="FIND"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>
+      <block type="lists_getIndex"><mutation statement="false" at="true"></mutation><field name="MODE">GET</field><field name="WHERE">FROM_START</field><value name="AT"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>
+      <block type="lists_setIndex"><mutation at="true"></mutation><field name="MODE">SET</field><field name="WHERE">FROM_START</field><value name="AT"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="TO"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>
+      <block type="lists_getSublist"><mutation at1="true" at2="true"></mutation><field name="WHERE1">FROM_START</field><field name="WHERE2">FROM_START</field><value name="AT1"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="AT2"><shadow type="math_number"><field name="NUM">2</field></shadow></value></block>
+      <block type="lists_split"><mutation mode="SPLIT"></mutation><field name="MODE">SPLIT</field><value name="INPUT"><shadow type="text"><field name="TEXT">abc,def</field></shadow></value><value name="DELIM"><shadow type="text"><field name="TEXT">,</field></shadow></value></block>
+      <block type="lists_sort"></block>
+      <block type="lists_reverse"></block>
+    </category>
+    
+    <sep></sep>
+    
+    <category name="{catVariables}" colour="330" custom="VARIABLE"></category>
+    <category name="{catFunctions}" colour="290" custom="PROCEDURE"></category>
+    
+    <sep></sep>
+    <category name="minecraft" colour="#8ca55b">
+      <block type="from_import_dot"><field name="NAME1">.</field><value name="NAME1"><block type="python_any"><field name="NAME">mcpi</field></block></value><value name="NAME2"><block type="python_any"><field name="NAME">minecraft</field></block></value><value name="NAME3"><block type="python_any"><field name="NAME">Minecraft</field></block></value></block>
+      <block type="block_assign"><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value><value name="NAME2"><block type="minecraft_block_left"><value name="NAME1"><block type="python_any"><field name="NAME">Minecraft</field></block></value><value name="NAME2"><block type="python_any"><field name="NAME">create</field></block></value></block></value></block>
+      <block type="minecraft_posttochat"><field name="NAME1">.postToChat(</field><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value><value name="NAME2"><shadow type="block_string_double_quotes"><field name="NAME"></field></shadow></value></block>
+      <block type="minecraft_getblock"><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value><value name="NAME2"><block type="block_comma3"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME3"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block></value></block>
+      <block type="minecraft_getblocks"><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value><value name="NAME2"><block type="block_comma6"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME3"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME4"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME5"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME6"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block></value></block>
+      <block type="minecraft_setblock"><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value><value name="NAME2"><block type="block_comma4"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME3"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME4"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block></value></block>
+      <block type="minecraft_setblock"><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value><value name="NAME2"><block type="block_comma5"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME3"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME4"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME5"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block></value></block>
+      <block type="minecraft_setblocks"><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value><value name="NAME2"><block type="block_comma7"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME3"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME4"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME5"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME6"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME7"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block></value></block>
+      <block type="minecraft_setblocks"><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value><value name="NAME2"><block type="block_comma8"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME3"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME4"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME5"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME6"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME7"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME8"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block></value></block>
+      <block type="block_assign"><value name="NAME1"><block type="block_comma3"><value name="NAME1"><block type="variables_get"><field name="VAR">x</field></block></value><value name="NAME2"><block type="variables_get"><field name="VAR">y</field></block></value><value name="NAME3"><block type="variables_get"><field name="VAR">z</field></block></value></block></value><value name="NAME2"><block type="minecraft_getPos"><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value></block></value></block>
+      <block type="block_assign"><value name="NAME1"><block type="block_comma3"><value name="NAME1"><block type="variables_get"><field name="VAR">x</field></block></value><value name="NAME2"><block type="variables_get"><field name="VAR">y</field></block></value><value name="NAME3"><block type="variables_get"><field name="VAR">z</field></block></value></block></value><value name="NAME2"><block type="minecraft_getTilePos"><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value></block></value></block>
+      <block type="minecraft_setPos"><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value><value name="NAME2"><block type="block_comma3"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME3"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block></value></block>
+      <block type="minecraft_setTilePos"><value name="NAME1"><block type="variables_get"><field name="VAR">mc</field></block></value><value name="NAME2"><block type="block_comma3"><value name="NAME1"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME2"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="NAME3"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block></value></block>
+      <block type="minecraft_block_up"></block>
+      <block type="minecraft_block_left"></block>
+    </category>
+
+	  
+  </xml>
+  
+</body>
+</html>
