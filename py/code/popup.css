@@ -94,13 +94,12 @@
   height: 100%;
   font-size: 14px;
   font-family: monospace;
-  border: 1px solid #ddd;
+  border: 1px solid #3b4252;
 }
-.CodeMirror-linenumber { color: #999; padding-right: 8px; }
+.CodeMirror-linenumber { color: #adb8cc; padding-right: 8px; }
 .CodeMirror-gutters {
-  border-right: 1px solid #ddd;
-  background-color: #f8f8f8;
+  background-color: #2e3440;
   padding-right: 8px;
-  width: 40px;
+  width: 46px;
 }
 .CodeMirror-lines { padding-left: 8px; }

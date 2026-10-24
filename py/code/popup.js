@@ -52,7 +52,7 @@
     if (!editor) {
       editor = CodeMirror.fromTextArea(document.getElementById("pythonEditor"), {
         mode: "python",
-        theme: "eclipse",
+        theme: "nord",
         lineNumbers: true,
         matchBrackets: true,
         indentUnit: 4,

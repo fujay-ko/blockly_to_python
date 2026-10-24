@@ -31,8 +31,8 @@
   
   <!-- CodeMirror 核心樣式 -->
   <link rel="stylesheet" href="vendor/codemirror/codemirror.min.css">
-  <!-- 主題 (此處採用 eclipse 主題) -->
-  <link rel="stylesheet" href="vendor/codemirror/theme/eclipse.min.css">
+  <!-- 主題 (此處採用 nord 主題) -->
+  <link rel="stylesheet" href="vendor/codemirror/theme/nord.min.css?v=3">
 
   <style>
     /* 將 body 設為橫向 Flex 版面 */
@@ -79,7 +79,7 @@
     .CodeMirror {
       width: 100%;
       height: 100%;
-      border: 1px solid #ddd;
+      border: 1px solid #3b4252;
       font-size: 16px;
     }
     /* 收合狀態下，右側的 CodeMirror 隱藏 */
@@ -305,7 +305,7 @@
 
       var editor = CodeMirror.fromTextArea(document.getElementById('pythonEditor'), {
         mode: "python",
-        theme: "eclipse",
+        theme: "nord",
         lineNumbers: true,
         matchBrackets: true,
         indentUnit: 4,
