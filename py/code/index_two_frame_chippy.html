@@ -32,7 +32,7 @@
   <!-- CodeMirror 核心樣式 -->
   <link rel="stylesheet" href="vendor/codemirror/codemirror.min.css">
   <!-- 主題 (此處採用 nord 主題) -->
-  <link rel="stylesheet" href="vendor/codemirror/theme/nord.min.css?v=3">
+  <link id="cm-theme" rel="stylesheet" href="vendor/codemirror/theme/nord.min.css?v=3">
 
   <style>
     /* 將 body 設為橫向 Flex 版面 */
@@ -229,6 +229,7 @@
   <script src="vendor/codemirror/codemirror.min.js"></script>
   <script src="vendor/codemirror/mode/python/python.min.js"></script>
   <script src="vendor/codemirror/addon/edit/matchbrackets.min.js"></script>
+<script src="theme-switcher.js?v=1"></script>
   
   <script>
     // 以下為原本其他功能程式碼 (例如 Blockly 與 CodeMirror 初始化)
