@@ -20,7 +20,7 @@ Blockly.Blocks['block_python_type'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(80);
- this.setTooltip("");
+ this.setTooltip("輸出所選的內建函式名稱（int、float、bool、chr、ord、hex、bin），通常接在括號積木前使用，例如 int(...)");
  this.setHelpUrl("");
   }
 };
@@ -43,7 +43,7 @@ Blockly.Blocks['block_input'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(80);
- this.setTooltip("");
+ this.setTooltip("讀取使用者輸入的文字（Python：input(提示訊息)）");
  this.setHelpUrl("");
   }
 };
@@ -65,7 +65,7 @@ Blockly.Blocks['block_any_line'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_comment_colour);
- this.setTooltip("註解文字記得最前面是#");
+ this.setTooltip("自由輸入一整行 Python 程式碼，原樣輸出成一行");
  this.setHelpUrl("");
   }
 };
@@ -84,7 +84,7 @@ Blockly.Blocks['block_emptystring'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_string_colour);
- this.setTooltip("");
+ this.setTooltip("空字串（Python：\"\"）");
  this.setHelpUrl("");
   }
 };
@@ -106,7 +106,7 @@ Blockly.Blocks['block_dot1'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(80);
- this.setTooltip("");
+ this.setTooltip("用「.」連接左右兩個內容，例如 物件.方法 或 模組.函式（Python：a.b）");
  this.setHelpUrl("");
   }
 };
@@ -133,7 +133,7 @@ Blockly.Blocks['import_as'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("匯入模組並取別名（Python：import 模組 as 別名）");
  this.setHelpUrl("");
   }
 };
@@ -178,7 +178,7 @@ Blockly.Blocks['from_import'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("從模組匯入指定內容（Python：from 模組 import 名稱）");
  this.setHelpUrl("");
   }
 };
@@ -200,7 +200,7 @@ Blockly.Blocks['import_var'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("匯入模組（Python：import 模組）");
  this.setHelpUrl("");
   }
 };
@@ -221,7 +221,7 @@ Blockly.Blocks['block_return_'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("結束函式並回傳值（Python：return 值）");
  this.setHelpUrl("");
   }
 };
@@ -245,7 +245,7 @@ Blockly.Blocks['any_in_brackets'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("呼叫函式並傳入括號內的參數，可當作值使用（Python：函式(參數)）");
  this.setHelpUrl("");
   }
 };
@@ -272,7 +272,7 @@ Blockly.Blocks['statement_var'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("自訂開頭關鍵字（預設 with）加上內容與冒號，下方放縮排的程式碼（Python：with 內容:）");
  this.setHelpUrl("");
   }
 };
@@ -332,7 +332,7 @@ Blockly.Blocks['obj_method'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("呼叫物件的方法並單獨成一行（Python：物件.方法(參數)）");
  this.setHelpUrl("");
   }
 };
@@ -358,7 +358,7 @@ Blockly.Blocks['import_any_as_any'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("匯入自訂名稱的模組並取別名（Python：import 模組名 as 別名）");
  this.setHelpUrl("");
   }
 };
@@ -383,7 +383,7 @@ Blockly.Blocks['any_func_value'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("呼叫自訂名稱的函式並傳入參數，可當作值使用（Python：函式名(參數)，例如 time.sleep(1)）");
  this.setHelpUrl("");
   }
 };
@@ -409,7 +409,7 @@ Blockly.Blocks['any_func_call_value'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("呼叫「模組.函式(參數)」並當作值使用（Python：random.randint(0,9)）");
  this.setHelpUrl("");
   }
 };
@@ -438,7 +438,7 @@ Blockly.Blocks['block_func'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("呼叫函式並單獨成一行（Python：函式(參數)）");
  this.setHelpUrl("");
   }
 };
@@ -467,7 +467,7 @@ Blockly.Blocks['any_func_call'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("呼叫「模組.函式(參數)」並把結果存入變數（Python：變數 = random.randint(0,9)）");
  this.setHelpUrl("");
   }
 };
@@ -490,7 +490,7 @@ Blockly.Blocks['import_any'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("匯入自訂名稱的模組（Python：import 模組名）");
  this.setHelpUrl("");
   }
 };
@@ -515,7 +515,7 @@ Blockly.Blocks['print_newline'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("印出內容，結尾換行，可修改 end 參數（Python：print(內容, end=\"\\n\")）");
  this.setHelpUrl("");
   }
 };
@@ -543,7 +543,7 @@ Blockly.Blocks['print_No_line_breaks'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("印出內容但結尾不換行（Python：print(內容, end=\"\")）");
  this.setHelpUrl("");
   }
 };
@@ -570,7 +570,7 @@ Blockly.Blocks['str_'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("把內容轉成字串（Python：str(內容)）");
  this.setHelpUrl("");
   }
 };
@@ -591,14 +591,14 @@ Blockly.Blocks['block_if_single'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_logic_colour);
- this.setTooltip("");
+ this.setTooltip("單行的 if 條件判斷（Python：if 條件:）");
  this.setHelpUrl("");
   }
 };
 Blockly.Python['block_if_single'] = function(block) {
   var value_name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_ATOMIC);
   // TODO: Assemble Python into code variable.
-  var code = 'if '+value_name+'\n';
+  var code = 'if '+value_name+':\n';
   return code;
 };
 //<block type="ifelse"></block>
@@ -620,7 +620,7 @@ Blockly.Blocks['ifelse'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_logic_colour);
- this.setTooltip("");
+ this.setTooltip("條件成立時執行上方程式，否則執行下方程式（Python：if 條件: ... else: ...）");
  this.setHelpUrl("");
   }
 };
@@ -657,7 +657,7 @@ Blockly.Blocks['elif'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_logic_colour);
- this.setTooltip("");
+ this.setTooltip("接在 if 後面，前面條件不成立時再判斷另一個條件（Python：elif 條件:）");
  this.setHelpUrl("");
   }
 };
@@ -685,7 +685,7 @@ Blockly.Blocks['else'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_logic_colour);
- this.setTooltip("");
+ this.setTooltip("接在 if 或 elif 後面，前面條件都不成立時執行（Python：else:）");
  this.setHelpUrl("");
   }
 };
@@ -714,7 +714,7 @@ Blockly.Blocks['if'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_logic_colour);
- this.setTooltip("");
+ this.setTooltip("條件成立時執行內部程式（Python：if 條件:）");
  this.setHelpUrl("");
   }
 };
@@ -741,7 +741,7 @@ Blockly.Blocks['python_logic_operation'] = {
 	this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_logic_colour);
- this.setTooltip("");
+ this.setTooltip("比較或邏輯運算，可選 ==、>、>=、<、<=、!=、and、or、in、is、is not，結果為 True 或 False");
  this.setHelpUrl("");
   }
 };
@@ -767,7 +767,7 @@ Blockly.Blocks['operator'] = {
 	  this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_logic_colour2);
-  this.setTooltip("");
+  this.setTooltip("算術運算，可選 +、-、*、/、%（取餘數）、//（整除）、**（次方）");
   this.setHelpUrl("");
   }
 };
@@ -794,7 +794,7 @@ Blockly.Blocks['compound_operator'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_logic_colour);
-  this.setTooltip("");
+  this.setTooltip("運算後把結果存回左邊變數，可選 +=、-=、*=、/=、%=、//=、**=（例如 a += 1）");
   this.setHelpUrl("");
   }
 };
@@ -819,7 +819,7 @@ Blockly.Blocks['bitwise_Operation'] = {
 	  this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_logic_colour);
-  this.setTooltip("");
+  this.setTooltip("位元運算，可選 |（或）、^（互斥或）、&（且）、<<（左移）、>>（右移）");
   this.setHelpUrl("");
   }
 };
@@ -843,7 +843,7 @@ Blockly.Blocks['python_logic_boolean'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_logic_colour);
- this.setTooltip("");
+ this.setTooltip("布林值，可選 True 或 False");
  this.setHelpUrl("");
   }
 };
@@ -870,7 +870,7 @@ Blockly.Blocks['while'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_loop_colour);
- this.setTooltip("");
+ this.setTooltip("條件成立時重複執行內部程式（Python：while 條件:）");
  this.setHelpUrl("");
   }
 };
@@ -904,7 +904,7 @@ Blockly.Blocks['try_except'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("嘗試執行上方程式，發生錯誤時把錯誤存入變數並執行下方處理（Python：try: ... except Exception as e: ...）");
  this.setHelpUrl("");
   }
 };
@@ -941,7 +941,7 @@ Blockly.Blocks['try_except_zero'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("嘗試執行上方程式，發生任何錯誤時執行下方處理（Python：try: ... except: ...）");
  this.setHelpUrl("");
   }
 };
@@ -974,7 +974,7 @@ Blockly.Blocks['python_int'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_math_colour);
- this.setTooltip("");
+ this.setTooltip("轉成整數（Python：int(值)）");
  this.setHelpUrl("");
   }
 };
@@ -998,7 +998,7 @@ Blockly.Blocks['python_float'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_math_colour);
- this.setTooltip("");
+ this.setTooltip("轉成浮點數（Python：float(值)）");
  this.setHelpUrl("");
   }
 };
@@ -1023,7 +1023,7 @@ Blockly.Blocks['python_list'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("轉成串列（Python：list(值)）");
  this.setHelpUrl("");
   }
 };
@@ -1047,7 +1047,7 @@ Blockly.Blocks['python_map'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("對每個元素套用函式（Python：map(函式, 可迭代物件)）");
  this.setHelpUrl("");
   }
 };
@@ -1071,7 +1071,7 @@ Blockly.Blocks['python_ord'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("取得字元的 Unicode 編碼（Python：ord(字元)）");
  this.setHelpUrl("");
   }
 };
@@ -1093,7 +1093,7 @@ Blockly.Blocks['python_time_import'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("匯入 time 模組（Python：import time）");
  this.setHelpUrl("");
   }
 };
@@ -1114,7 +1114,7 @@ Blockly.Blocks['python_time_sleep'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("讓程式暫停指定秒數，需先匯入 time（Python：time.sleep(秒數)）");
  this.setHelpUrl("");
   }
 };
@@ -1135,7 +1135,7 @@ Blockly.Blocks['plus2'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_string_colour);
- this.setTooltip("");
+ this.setTooltip("用 + 把兩個內容相加或串接（Python：a+b）");
  this.setHelpUrl("");
   }
 }
@@ -1164,7 +1164,7 @@ Blockly.Blocks['plus3'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_string_colour);
- this.setTooltip("");
+ this.setTooltip("用 + 把三個內容相加或串接（Python：a+b+c）");
  this.setHelpUrl("");
   }
 };
@@ -1199,7 +1199,7 @@ Blockly.Blocks['plus4'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_string_colour);
- this.setTooltip("");
+ this.setTooltip("用 + 把四個內容相加或串接（Python：a+b+c+d）");
  this.setHelpUrl("");
   }
 };
@@ -1239,7 +1239,7 @@ Blockly.Blocks['plus5'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_string_colour);
- this.setTooltip("");
+ this.setTooltip("用 + 把五個內容相加或串接（Python：a+b+c+d+e）");
  this.setHelpUrl("");
   }
 };
@@ -1271,7 +1271,7 @@ Blockly.Blocks['for_i_in_'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_loop_colour);
- this.setTooltip("");
+ this.setTooltip("讓變數 i、j、k 或 l 依序取出內容中的每個元素並執行內部程式（Python：for i in 內容:）");
  this.setHelpUrl("");
   }
 };
@@ -1298,7 +1298,7 @@ Blockly.Blocks['python_range'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_loop_colour);
- this.setTooltip("");
+ this.setTooltip("產生 0 到 n-1 的整數序列（Python：range(n)）");
  this.setHelpUrl("");
   }
 };
@@ -1323,7 +1323,7 @@ Blockly.Blocks['python_range2'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_loop_colour);
- this.setTooltip("");
+ this.setTooltip("產生從 a 到 b-1 的整數序列（Python：range(a, b)）");
  this.setHelpUrl("");
   }
 };
@@ -1353,7 +1353,7 @@ Blockly.Blocks['python_range3'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_loop_colour);
- this.setTooltip("");
+ this.setTooltip("從 a 開始、到 b-1 結束，每次增加 c 的整數序列（Python：range(a, b, c)）");
  this.setHelpUrl("");
   }
 };
@@ -1370,11 +1370,11 @@ Blockly.Python['python_range3'] = function(block) {
 Blockly.Blocks['python_continue'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("continute");
+        .appendField("continue");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_logic_colour);
- this.setTooltip("");
+ this.setTooltip("跳過本輪迴圈剩下的內容，直接進入下一輪（Python：continue）");
  this.setHelpUrl("");
   }
 };
@@ -1391,7 +1391,7 @@ Blockly.Blocks['python_break'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_logic_colour);
- this.setTooltip("");
+ this.setTooltip("立刻結束整個迴圈（Python：break）");
  this.setHelpUrl("");
   }
 };
@@ -1415,7 +1415,7 @@ Blockly.Blocks['python_with_open'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("開啟檔案（參數為檔名）並命名為 f，內部程式執行完會自動關閉檔案（Python：with open(檔名) as f:）");
  this.setHelpUrl("");
   }
 };
@@ -1434,7 +1434,7 @@ Blockly.Blocks['python_f_readlines'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("讀取檔案的所有行，回傳串列（Python：f.readlines()）");
  this.setHelpUrl("");
   }
 };
@@ -1451,7 +1451,7 @@ Blockly.Blocks['python_f_readline'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("讀取檔案的下一行（Python：f.readline()）");
  this.setHelpUrl("");
   }
 };
@@ -1472,7 +1472,7 @@ Blockly.Blocks['python_f_write'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("把內容寫入檔案（Python：f.write(內容)）");
  this.setHelpUrl("");
   }
 };
@@ -1507,7 +1507,7 @@ Blockly.Blocks['python_any'] = {
         .appendField(new Blockly.FieldTextInput(""), "NAME");
     this.setOutput(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("自由輸入文字，原樣當作值輸出，可填變數名稱、數字或運算式");
  this.setHelpUrl("");
   }
 };
@@ -1533,7 +1533,7 @@ Blockly.Blocks['block_assign'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(80);
- this.setTooltip("");
+ this.setTooltip("把右邊的值存入左邊變數（Python：變數 = 值）");
  this.setHelpUrl("");
   }
 };
@@ -1555,7 +1555,7 @@ Blockly.Blocks['block_string_double_quotes'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_string_colour);
- this.setTooltip("");
+ this.setTooltip("雙引號字串（Python：\"文字\"）");
  this.setHelpUrl("");
   }
 };
@@ -1577,7 +1577,7 @@ Blockly.Blocks['block_string'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_string_colour);
- this.setTooltip("");
+ this.setTooltip("單引號字串（Python：'文字'）");
  this.setHelpUrl("");
   }
 };
@@ -1599,7 +1599,7 @@ Blockly.Blocks['block_fstring'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_string_colour);
- this.setTooltip("");
+ this.setTooltip("格式化字串，可在文字中用 {變數} 帶入內容（Python：f\"文字{變數}\"）");
  this.setHelpUrl("");
   }
 };
@@ -1623,7 +1623,7 @@ Blockly.Blocks['block_colon_a_b'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("用冒號連接兩個內容，用於切片或字典（Python：a:b）");
  this.setHelpUrl("");
   }
 };
@@ -1650,7 +1650,7 @@ Blockly.Blocks['block_colon_a_b_c'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("用冒號連接三個內容，用於切片（Python：起點:終點:間隔）");
  this.setHelpUrl("");
   }
 };
@@ -1675,7 +1675,7 @@ Blockly.Blocks['python_bytes'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_math_colour);
- this.setTooltip("");
+ this.setTooltip("轉成 bytes 位元組資料（Python：bytes(值)）");
  this.setHelpUrl("");
   }
 };
@@ -1698,7 +1698,7 @@ Blockly.Blocks['python_big_parantheses'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("大括號，用於建立字典或集合（Python：{內容}）");
  this.setHelpUrl("");
   }
 };
@@ -1722,7 +1722,7 @@ Blockly.Blocks['block_parentheses'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("小括號，用來包住內容或改變運算順序（Python：(內容)）");
  this.setHelpUrl("");
   }
 };
@@ -1745,7 +1745,7 @@ Blockly.Blocks['python_in'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("判斷左邊的值是否在右邊的內容之中，結果為 True 或 False（Python：a in b）");
  this.setHelpUrl("");
   }
 };
@@ -1768,7 +1768,7 @@ Blockly.Blocks['python_global'] = {
     this.setColour(python_functions_colour);
 	this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-	this.setTooltip("");
+	this.setTooltip("在函式內宣告使用全域變數（Python：global 變數）");
 	this.setHelpUrl("");
   }
 };
@@ -1791,7 +1791,7 @@ Blockly.Blocks['block_comma'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("用逗號連接兩個內容（Python：a,b）");
  this.setHelpUrl("");
   }
 };
@@ -1813,7 +1813,7 @@ Blockly.Blocks['python_any_statement'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("自由輸入一行程式碼或註解，原樣輸出成一行（預設為註解）");
  this.setHelpUrl("");
   }
 };
@@ -1836,7 +1836,7 @@ Blockly.Blocks['block_get_anyconcat'] = {
     this.setInputsInline(true);print
     this.setOutput(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("用自訂符號（預設為「.」）連接左右兩個內容，可當作值使用");
  this.setHelpUrl("");
   }
 };
@@ -1865,7 +1865,7 @@ Blockly.Blocks['block_anyconcat'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("用自訂符號（預設為「=」）連接左右兩個內容，單獨成一行");
  this.setHelpUrl("");
   }
 };
@@ -1893,7 +1893,7 @@ Blockly.Blocks['block_def'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(80);
- this.setTooltip("");
+ this.setTooltip("定義函式，右方填函式名稱，下方放函式內容（Python：def 函式名(): ...）");
  this.setHelpUrl("");
   }
 };
@@ -1923,7 +1923,7 @@ Blockly.Blocks['block_class'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(80);
- this.setTooltip("");
+ this.setTooltip("定義類別，右方填類別名稱，下方放類別內容（Python：class 類別名: ...）");
  this.setHelpUrl("");
   }
 };
@@ -1946,7 +1946,7 @@ Blockly.Blocks['any_indent_statement'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("自訂開頭文字（預設 def func():）的縮排區塊，下方放區塊內的程式碼");
  this.setHelpUrl("");
   }
 };
@@ -1973,7 +1973,7 @@ Blockly.Blocks['create_arrayin'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("建立串列（Python：[內容]）");
  this.setHelpUrl("");
   }
 };
@@ -2002,7 +2002,7 @@ Blockly.Blocks['for_loop'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_loop_colour);
- this.setTooltip("");
+ this.setTooltip("讓左邊變數依序取出右邊內容的每個元素並執行內部程式（Python：for 變數 in 內容:）");
  this.setHelpUrl("");
   }
 };
@@ -2030,7 +2030,7 @@ Blockly.Blocks['block_equal_'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(80);
- this.setTooltip("");
+ this.setTooltip("指定運算式，可當作值使用，例如函式的參數（Python：a=b）");
  this.setHelpUrl("");
   }
 };
@@ -2056,7 +2056,7 @@ Blockly.Blocks['math_value_left'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(230);
- this.setTooltip("");
+ this.setTooltip("數值函式，可選 int、float、bin、hex、oct、abs、divmod、pow、round，對括號內的值運算");
  this.setHelpUrl("");
   }
 };
@@ -2082,7 +2082,7 @@ Blockly.Blocks['list_value'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("對串列等容器運算，可選 len、min、max、sum、sorted、reversed、zip、enumerate、iter、next、any、all、filter、slice");
  this.setHelpUrl("");
   }
 };
@@ -2108,7 +2108,7 @@ Blockly.Blocks['string_value'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(230);
- this.setTooltip("");
+ this.setTooltip("對字串或容器運算，可選 len、min、max、sum、sorted、zip、enumerate、iter、next");
  this.setHelpUrl("");
   }
 };
@@ -2138,7 +2138,7 @@ Blockly.Blocks['list_operations'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("串列方法，可當作值使用，可選 append、join、count、extend、index、insert、pop、remove、reverse、sort（Python：串列.方法(參數)）");
  this.setHelpUrl("");
   }
 };
@@ -2168,7 +2168,7 @@ Blockly.Blocks['string_operations'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_string_colour);
- this.setTooltip("");
+ this.setTooltip("字串方法，可當作值使用，可選 split、replace、strip、startswith、count、join、title、upper、lower、capitalize、swapcase、islower、isupper、isalpha、isdecimal、isalnum、isdigit（Python：字串.方法(參數)）");
  this.setHelpUrl("");
   }
 };
@@ -2198,7 +2198,7 @@ Blockly.Blocks['block_print_all'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_functions_colour);
- this.setTooltip("");
+ this.setTooltip("印出內容，可設定分隔符號 sep 與結尾 end（Python：print(內容, sep=\" \", end=\"\\n\")）");
  this.setHelpUrl("");
   }
 };
@@ -2207,7 +2207,7 @@ Blockly.Python['block_print_all'] = function(block) {
   var text_name2 = block.getFieldValue('NAME2');
   var text_name3 = block.getFieldValue('NAME3');
   // TODO: Assemble Python into code variable.
-  var code = "print( "+ value_name1 + ", " + text_name2 + ", " + text_name3 +" )";
+  var code = "print( "+ value_name1 + ", " + text_name2 + ", " + text_name3 +" )\n";
   return code;
 };
 
@@ -2229,7 +2229,7 @@ Blockly.Blocks['list_for_input_1d'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("串列生成式，用迴圈一次產生新串列（Python：[運算式 for 變數 in 內容]）");
  this.setHelpUrl("");
   }
 };
@@ -2257,7 +2257,7 @@ Blockly.Blocks['build_tuple2'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("建立含兩個元素的 tuple（Python：(a,b)）");
  this.setHelpUrl("");
   }
 };
@@ -2287,7 +2287,7 @@ Blockly.Blocks['build_tuple3'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("建立含三個元素的 tuple（Python：(a,b,c)）");
  this.setHelpUrl("");
   }
 };
@@ -2321,7 +2321,7 @@ Blockly.Blocks['numpy_var_dim3'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("取出串列變數的切片（Python：變數[起點:終點:間隔]）");
  this.setHelpUrl("");
   }
 };
@@ -2409,7 +2409,7 @@ Blockly.Blocks['f_string_block'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(80);
- this.setTooltip("");
+ this.setTooltip("格式化字串的外框，內容可放文字與 {變數}（Python：f\"內容\"）");
  this.setHelpUrl("");
   }
 };
@@ -2434,7 +2434,7 @@ Blockly.Blocks['block_print_single'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(80);
- this.setTooltip("");
+ this.setTooltip("印出內容並換行（Python：print(內容)）");
  this.setHelpUrl("");
   }
 };
@@ -2457,7 +2457,7 @@ Blockly.Blocks['fstring_format_block'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(80);
- this.setTooltip("");
+ this.setTooltip("在格式化字串中指定顯示格式（Python：{值:格式}，例如 {x:.2f}）");
  this.setHelpUrl("");
   }
 };
@@ -2480,7 +2480,7 @@ Blockly.Blocks['python_dict'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("轉成字典（Python：dict(值)）");
  this.setHelpUrl("");
   }
 };
@@ -2504,7 +2504,7 @@ Blockly.Blocks['python_set'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("轉成集合，會去除重複元素（Python：set(值)）");
  this.setHelpUrl("");
   }
 };
@@ -2533,7 +2533,7 @@ Blockly.Blocks['from_import_dot'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("從套件的子模組匯入內容（Python：from 套件.子模組 import 名稱）");
  this.setHelpUrl("");
   }
 };
@@ -2566,7 +2566,7 @@ Blockly.Blocks['minecraft_block_up'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("呼叫 Minecraft 物件的方法並單獨成一行（Python：mc.方法(參數)）");
  this.setHelpUrl("");
   }
 };
@@ -2597,7 +2597,7 @@ Blockly.Blocks['minecraft_block_left'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("呼叫 Minecraft 物件的方法，可當作值使用（Python：mc.方法(參數)）");
  this.setHelpUrl("");
   }
 };
@@ -2628,7 +2628,7 @@ Blockly.Blocks['minecraft_posttochat'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("在 Minecraft 聊天視窗顯示訊息（Python：mc.postToChat(訊息)）");
  this.setHelpUrl("");
   }
 };
@@ -2653,7 +2653,7 @@ Blockly.Blocks['minecraft_getblock'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("取得指定座標的方塊種類（Python：mc.getBlock(x, y, z)）");
  this.setHelpUrl("");
   }
 };
@@ -2679,7 +2679,7 @@ Blockly.Blocks['minecraft_getblocks'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("取得指定範圍內的方塊種類（Python：mc.getBlocks(x1, y1, z1, x2, y2, z2)）");
  this.setHelpUrl("");
   }
 };
@@ -2706,7 +2706,7 @@ Blockly.Blocks['minecraft_setblock'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("在指定座標放置方塊（Python：mc.setBlock(x, y, z, 方塊編號)）");
  this.setHelpUrl("");
   }
 };
@@ -2733,7 +2733,7 @@ Blockly.Blocks['minecraft_setblocks'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("在兩個座標圍成的範圍內放滿方塊（Python：mc.setBlocks(x1, y1, z1, x2, y2, z2, 方塊編號)）");
  this.setHelpUrl("");
   }
 };
@@ -2759,7 +2759,7 @@ Blockly.Blocks['minecraft_getTilePos'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("取得玩家所在位置的整數座標（Python：mc.player.getTilePos()）");
  this.setHelpUrl("");
   }
 };
@@ -2786,7 +2786,7 @@ Blockly.Blocks['minecraft_getPos'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("取得玩家所在位置的精確座標（Python：mc.player.getPos()）");
  this.setHelpUrl("");
   }
 };
@@ -2814,7 +2814,7 @@ Blockly.Blocks['minecraft_setTilePos'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("把玩家移動到指定的整數座標（Python：mc.player.setTilePos(x, y, z)）");
  this.setHelpUrl("");
   }
 };
@@ -2842,7 +2842,7 @@ Blockly.Blocks['minecraft_setPos'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("把玩家移動到指定的座標（Python：mc.player.setPos(x, y, z)）");
  this.setHelpUrl("");
   }
 };
@@ -2873,7 +2873,7 @@ Blockly.Blocks['minecraft_block'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(180);
- this.setTooltip("");
+ this.setTooltip("呼叫 Minecraft 物件的方法並單獨成一行（Python：mc.方法(參數)）");
  this.setHelpUrl("");
   }
 };
@@ -2897,7 +2897,7 @@ Blockly.Blocks['logic_not'] = {
     this.setInputsInline(true);
     this.setOutput(true, null);
     this.setColour(230);
- this.setTooltip("");
+ this.setTooltip("把布林值反過來（Python：not 值）");
  this.setHelpUrl("");
   }
 };
@@ -2927,7 +2927,7 @@ Blockly.Blocks['list_operations_up'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_container_colour);
- this.setTooltip("");
+ this.setTooltip("串列方法並單獨成一行，可選 append、join、count、extend、index、insert、pop、remove、reverse、sort（Python：串列.方法(參數)）");
  this.setHelpUrl("");
   }
 };
@@ -3005,7 +3005,7 @@ Blockly.Blocks['speak_out'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(135);
- this.setTooltip("");
+ this.setTooltip("說出（印出）內容並換行（Python：print(內容)）");
  this.setHelpUrl("");
   }
 };
