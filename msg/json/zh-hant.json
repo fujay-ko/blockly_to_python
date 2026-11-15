@@ -320,7 +320,7 @@
 	"VARIABLES_GET_TOOLTIP": "返回此變數的值。",
 	"VARIABLES_GET_CREATE_SET": "建立「賦值 %1」",
 	"VARIABLES_SET": "賦值 %1 成 %2",
-	"VARIABLES_SET_TOOLTIP": "設定此變數，好和輸入結果相等。",
+	"VARIABLES_SET_TOOLTIP": "將此變數的值設定為輸入的值。",
 	"VARIABLES_SET_CREATE_GET": "建立「取得 %1」",
 	"PROCEDURES_DEFNORETURN_HELPURL": "https://zh.wikipedia.org/wiki/子程式",
 	"PROCEDURES_DEFNORETURN_TITLE": "到",
