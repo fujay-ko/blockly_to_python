@@ -8,7 +8,7 @@ var MSG = {
   trashTooltip: "捨棄所有積木。",
   catLogic: "邏輯",
   catLoops: "迴圈",
-  catMath: "數學式",
+  catMath: "數學",
   catText: "文字",
   catLists: "清單",
   catColour: "顏色",
