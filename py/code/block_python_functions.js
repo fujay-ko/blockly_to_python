@@ -65,7 +65,7 @@ Blockly.Blocks['block_any_line'] = {
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(python_comment_colour);
- this.setTooltip("自由輸入一整行 Python 程式碼，原樣輸出成一行");
+ this.setTooltip("註解用，記得文字最前面是#");
  this.setHelpUrl("");
   }
 };
